@@ -1,0 +1,79 @@
+
+(rules PCB goofy_headboard.dsn
+  (snap_angle 
+    fortyfive_degree
+  )
+  (rule
+    (width 200.0)
+    (clearance 150.0)
+    (clearance 100.0 (type smd_to_turn_gap))
+    (clearance 37.6 (type smd))
+    (clearance 150.0 (type "Power_Standard"))
+    (clearance 150.0 (type "GND_Planes"))
+    (clearance 500.0 (type "board_edge"))
+  )
+  (padstack "Via[0-1]_500:300_um"
+    (shape
+      (circle F.Cu 500.0 0.0 0.0)
+    )
+    (shape
+      (circle B.Cu 500.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (via 
+    "Via[0-1]_500:300_um" "Via[0-1]_500:300_um" default
+  )
+  (via 
+    "Via[0-1]_500:300_um-Power_Standard" "Via[0-1]_500:300_um" "Power_Standard"
+  )
+  (via 
+    "Via[0-1]_500:300_um-GND_Planes" "Via[0-1]_500:300_um" "GND_Planes"
+  )
+  (via_rule
+    default "Via[0-1]_500:300_um"
+  )
+  (via_rule
+    default "Via[0-1]_500:300_um"
+  )
+  (via_rule
+    "Power_Standard" "Via[0-1]_500:300_um-Power_Standard"
+  )
+  (via_rule
+    "GND_Planes" "Via[0-1]_500:300_um-GND_Planes"
+  )
+  (class default
+    "CAM_SIOD" "CAM_SIOC" "CAM_XCLK" "CAM_PCLK" "I2S_WS" "I2S_MIC_DATA" "I2S_BCLK" "I2C_SCL"
+    "I2C_SDA" "TOUCH_HEAD"
+    (clearance_class default)
+    (via_rule default)
+    (rule
+      (width 200.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class "Power_Standard"
+    "3V3"
+    (clearance_class "Power_Standard")
+    (via_rule "Power_Standard")
+    (rule
+      (width 400.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class "GND_Planes"
+    GND
+    (clearance_class "GND_Planes")
+    (via_rule "GND_Planes")
+    (rule
+      (width 500.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+)

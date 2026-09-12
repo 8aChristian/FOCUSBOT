@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.class
+
+# Scratch & Temporary Logs
+scratch/
+*.log
+*.rpt
+*.jsonl
+
+# KiCad temporary & user state files
+*-backups/
+.mcp-backups/
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*.kicad_prl
+*.dsn
+*.ses
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+.history/
+**/.history/
+# Temporary CAD & KiCad test benches
+cad/test_*.py
+cad/verify_v[0-9].py
+cad/check_*.py
+cad/debug_*.py
+hardware/mainboard/test_*.*
+hardware/mainboard/raw_test.*
+hardware/mainboard/drc_pre.rpt
+hardware/mainboard/*-drc.rpt
+hardware/mainboard/*.json
+*.FCBak
+*.txt
