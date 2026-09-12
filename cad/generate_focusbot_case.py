@@ -2,13 +2,13 @@ import os, sys, math
 import FreeCAD
 import Part
 
-print(">>> [CASE PERFECTION ENGINE v12.0 - ROBOTICS ENGINEER] Generating Production-Grade Goofy Case...", flush=True)
+print(">>> [CASE PERFECTION ENGINE v12.0 - ROBOTICS ENGINEER] Generating Production-Grade FocusBot Case...", flush=True)
 
 out_dir = r"c:\Users\Christian Ochoa\Documents\antigravity\goofy-borg\cad"
 stl_dir = os.path.join(out_dir, "stl")
 os.makedirs(stl_dir, exist_ok=True)
 
-doc = FreeCAD.newDocument("Goofy_Robot_Case_v12_0")
+doc = FreeCAD.newDocument("FocusBot_Case_v12_0")
 
 COLOR_BODY_CREAM    = (0.95, 0.94, 0.91, 0.0)
 COLOR_VISOR_BLACK   = (0.08, 0.08, 0.10, 0.0)
@@ -456,30 +456,33 @@ add_part(cam, "Interno_Camara_OV2640", "Camara_OV2640", COLOR_VISOR_BLACK)
 # ==============================================================================
 print("7. Saving Native CAD and Exporting 3D Printable STL Files...", flush=True)
 
-fcstd_file = os.path.join(out_dir, "goofy_robot_case.FCStd")
+fcstd_file = os.path.join(out_dir, "focusbot_case.FCStd")
 doc.saveAs(fcstd_file)
 print(f"[OK] Saved Native FreeCAD Document: {fcstd_file}", flush=True)
 
-step_file = os.path.join(out_dir, "goofy_robot_case.step")
+step_file = os.path.join(out_dir, "focusbot_case.step")
 all_shapes = [obj.Shape for obj in doc.Objects if hasattr(obj, "Shape")]
 Part.export(all_shapes, step_file)
 print(f"[OK] Saved Master STEP File: {step_file}", flush=True)
 
 stl_export_map = {
-    "1_Carcasa_Cabeza_Frontal.stl": doc.getObject("Carcasa_Cabeza_Frontal"),
-    "2_Carcasa_Cabeza_Trasera.stl": doc.getObject("Carcasa_Cabeza_Trasera"),
-    "3_Visor_Frontal_2Pulgadas.stl": doc.getObject("Visor_Frontal_2Pulgadas"),
-    "4_Carcasa_Torso_Chasis.stl":   doc.getObject("Carcasa_Torso_Chasis"),
-    "5_Carcasa_Torso_Tapa.stl":     doc.getObject("Carcasa_Torso_Tapa"),
-    "6_Difusor_Luz_Pecho.stl":      doc.getObject("Difusor_Luz_Pecho"),
-    "7_Rueda_Traccion_L.stl":       doc.getObject("Rueda_Traccion_L"),
-    "8_Rueda_Traccion_R.stl":       doc.getObject("Rueda_Traccion_R"),
-    "9_Bola_Rodamiento_Caster.stl": doc.getObject("Bola_Rodamiento_Frontal"),
+    "01_Carcasa_Cabeza_Frontal.stl": doc.getObject("Carcasa_Cabeza_Frontal"),
+    "02_Carcasa_Cabeza_Trasera.stl": doc.getObject("Carcasa_Cabeza_Trasera"),
+    "03_Carcasa_Torso_Chasis.stl":   doc.getObject("Carcasa_Torso_Chasis"),
+    "04_Carcasa_Torso_Tapa.stl":     doc.getObject("Carcasa_Torso_Tapa"),
+    "05_Visor_Frontal_2Pulgadas.stl": doc.getObject("Visor_Frontal_2Pulgadas"),
+    "06_Difusor_Luz_Pecho.stl":      doc.getObject("Difusor_Luz_Pecho"),
+    "07_Rueda_Traccion_L.stl":       doc.getObject("Rueda_Traccion_L"),
+    "08_Rueda_Traccion_R.stl":       doc.getObject("Rueda_Traccion_R"),
+    "09_Aro_Cyan_Rueda_L.stl":       doc.getObject("Aro_Cyan_Rueda_L"),
+    "10_Aro_Cyan_Rueda_R.stl":       doc.getObject("Aro_Cyan_Rueda_R"),
 }
 
+import MeshPart
 for filename, part_obj in stl_export_map.items():
     if part_obj and hasattr(part_obj, "Shape") and part_obj.Shape.Volume > 0:
         out_stl = os.path.join(stl_dir, filename)
-        part_obj.Shape.exportStl(out_stl)
+        m = MeshPart.meshFromShape(part_obj.Shape, 0.05, 0.35)
+        m.write(out_stl)
 
 print(">>> [CASE PERFECTION ENGINE v12.0] Complete Mechatronic Enclosure Exported Successfully!", flush=True)

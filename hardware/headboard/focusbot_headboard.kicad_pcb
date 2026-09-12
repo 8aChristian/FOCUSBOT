@@ -5631,4 +5631,28 @@
 		)
 	)
 	(embedded_fonts no)
+	(gr_text "FOCUSBOT HEADBOARD v12.0"
+		(at 150 92.5)
+		(layer "F.SilkS")
+		(uuid "fbc-hb-title-01")
+		(effects
+			(font
+				(size 1.2 1.2)
+				(thickness 0.2)
+			)
+			(justify center)
+		)
+	)
+	(gr_text "OPEN-SOURCE HARDWARE"
+		(at 150 94.8)
+		(layer "F.SilkS")
+		(uuid "fbc-hb-oshw-01")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+			(justify center)
+		)
+	)
 )

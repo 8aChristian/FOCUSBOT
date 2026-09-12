@@ -248,7 +248,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "goofy_mainboard.kicad_pro",
+    "filename": "focusbot_mainboard.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -296,8 +296,8 @@
     "legacy_lib_list": [],
     "top_level_sheets": [
       {
-        "filename": "goofy_mainboard.kicad_sch",
-        "name": "goofy_mainboard",
+        "filename": "focusbot_mainboard.kicad_sch",
+        "name": "focusbot_mainboard",
         "uuid": "00000000-0000-0000-0000-000000000000"
       }
     ]

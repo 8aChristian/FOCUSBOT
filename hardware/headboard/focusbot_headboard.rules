@@ -1,5 +1,5 @@
 
-(rules PCB goofy_headboard.dsn
+(rules PCB focusbot_headboard.dsn
   (snap_angle 
     fortyfive_degree
   )

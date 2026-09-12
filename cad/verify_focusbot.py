@@ -1,6 +1,6 @@
 import FreeCAD, Part
 
-doc = FreeCAD.open(r"c:\Users\Christian Ochoa\Documents\antigravity\goofy-borg\cad\goofy_robot_case.FCStd")
+doc = FreeCAD.open(r"c:\Users\Christian Ochoa\Documents\antigravity\goofy-borg\cad\focusbot_case.FCStd")
 
 head_f    = doc.getObject("Carcasa_Cabeza_Frontal").Shape
 head_r    = doc.getObject("Carcasa_Cabeza_Trasera").Shape

@@ -3,9 +3,9 @@ import TechDraw
 import Part
 import os
 
-print(">>> [DASHBOARD RENDERER v12] Exporting Goofy Case 2D Technical Views...", flush=True)
+print(">>> [DASHBOARD RENDERER v12] Exporting FocusBot Case 2D Technical Views...", flush=True)
 
-fcstd_file = r"c:\Users\Christian Ochoa\Documents\antigravity\goofy-borg\cad\goofy_robot_case.FCStd"
+fcstd_file = r"c:\Users\Christian Ochoa\Documents\antigravity\goofy-borg\cad\focusbot_case.FCStd"
 doc = FreeCAD.open(fcstd_file)
 
 exterior_names = [
@@ -50,7 +50,7 @@ dashboard_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 92
   <rect x="20" y="20" width="1160" height="72" rx="14" fill="#0f172a" stroke="#1e293b" stroke-width="1.5"/>
   <circle cx="54" cy="56" r="16" fill="#0284c7"/>
   <path d="M 47 56 L 52 61 L 61 50" stroke="#ffffff" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="82" y="48" fill="#f8fafc" font-size="20" font-weight="700">GOOFY ROBOT CASE v12.0: DFA Top-Down Assembly, Smooth Wheels &amp; Visible Fasteners</text>
+  <text x="82" y="48" fill="#f8fafc" font-size="20" font-weight="700">FOCUSBOT CASE v12.0: DFA Top-Down Assembly, Smooth Wheels &amp; Visible Fasteners</text>
   <text x="82" y="71" fill="#94a3b8" font-size="13">Bañera Monocasco + Tapa Superior • Ruedas Lisas Ø34mm • 4x M2 Cabeza Traseros Visibles • Altura 8.0 cm</text>
   
   <rect x="920" y="34" width="240" height="44" rx="10" fill="url(#badgeGrad)"/>
@@ -109,12 +109,12 @@ dashboard_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 92
   <text x="630" y="871" fill="#94a3b8" font-size="12">• 4x M2 avellanados cabeza trasera 100% visibles • 4x M2 tapa torso • USB-C y switch SW1</text>
 </svg>'''
 
-out_svg = r"c:\Users\Christian Ochoa\Documents\antigravity\goofy-borg\cad\goofy_case_dashboard.svg"
+out_svg = r"c:\Users\Christian Ochoa\Documents\antigravity\goofy-borg\cad\focusbot_case_dashboard.svg"
 with open(out_svg, "w", encoding="utf-8") as f:
     f.write(dashboard_svg)
 print(f"[OK] Exported updated 2D Dashboard SVG: {out_svg}", flush=True)
 
-artifact_svg = r"C:\Users\Christian Ochoa\.gemini\antigravity\brain\f97d3ae3-cffb-48bb-b959-294df62a532c\goofy_case_dashboard.svg"
+artifact_svg = r"C:\Users\Christian Ochoa\.gemini\antigravity\brain\f97d3ae3-cffb-48bb-b959-294df62a532c\focusbot_case_dashboard.svg"
 with open(artifact_svg, "w", encoding="utf-8") as f:
     f.write(dashboard_svg)
 print(f"[OK] Copied Dashboard SVG to Artifacts: {artifact_svg}", flush=True)

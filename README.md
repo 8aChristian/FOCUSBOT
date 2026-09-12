@@ -1,11 +1,17 @@
 # FOCUSBOT: Open-Source Autonomous AI Desktop Companion Robot
 
-[![License: CERN-OHL-S](https://img.shields.io/badge/Hardware_License-CERN--OHL--S-0284c7.svg?style=for-the-badge)](https://ohwr.org/cern_ohl_s_v2.txt)
-[![License: MIT](https://img.shields.io/badge/Software_License-MIT-38bdf8.svg?style=for-the-badge)](LICENSE)
-[![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Grade%20v12.0-34d399.svg?style=for-the-badge)]()
-[![CAD: FreeCAD 1.0](https://img.shields.io/badge/CAD-FreeCAD%201.0%20OCC-a855f7.svg?style=for-the-badge)](https://www.freecad.org/)
-[![EDA: KiCad 8.0](https://img.shields.io/badge/EDA-KiCad%208.0-fbbf24.svg?style=for-the-badge)](https://www.kicad.org/)
-[![MCU: ESP32-S3](https://img.shields.io/badge/Compute-ESP32--S3%20Xtensa%20LX7-ef4444.svg?style=for-the-badge)](https://www.espressif.com/)
+<p align="center">
+  <img src="docs/images/focusbot_3d_render.png" alt="FocusBot 3D Photorealistic Studio Render" width="850">
+</p>
+
+<p align="center">
+  <a href="https://ohwr.org/cern_ohl_s_v2.txt"><img src="https://img.shields.io/badge/Hardware_License-CERN--OHL--S-0284c7.svg?style=for-the-badge" alt="CERN-OHL-S"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Software_License-MIT-38bdf8.svg?style=for-the-badge" alt="MIT"></a>
+  <img src="https://img.shields.io/badge/Status-Production%20Grade%20v12.0-34d399.svg?style=for-the-badge" alt="Production Grade">
+  <a href="https://www.freecad.org/"><img src="https://img.shields.io/badge/CAD-FreeCAD%201.0%20OCC-a855f7.svg?style=for-the-badge" alt="FreeCAD"></a>
+  <a href="https://www.kicad.org/"><img src="https://img.shields.io/badge/EDA-KiCad%208.0-fbbf24.svg?style=for-the-badge" alt="KiCad 8.0"></a>
+  <a href="https://www.espressif.com/"><img src="https://img.shields.io/badge/Compute-ESP32--S3%20Xtensa%20LX7-ef4444.svg?style=for-the-badge" alt="ESP32-S3"></a>
+</p>
 
 ---
 
@@ -17,11 +23,17 @@ FocusBot is **100% Open Source Hardware & Software**, designed for accessible ma
 
 ---
 
-## 📐 Mechanical Architecture & Industrial Enclosure
+## 📐 Mechanical Architecture & DFA Top-Down Assembly
 
-FocusBot features a custom **Top-Down DFA (Design for Assembly)** monocoque architecture engineered in FreeCAD with parametric Open CASCADE technology:
+FocusBot features a custom **Top-Down DFA (Design for Assembly)** monocoque architecture engineered in FreeCAD with parametric Open CASCADE solid modeling:
 
-![FocusBot Case Architecture & Engineering Views](docs/images/case_architecture.svg)
+<p align="center">
+  <img src="docs/images/focusbot_3d_exploded.png" alt="FocusBot 3D Exploded Assembly Render" width="850">
+</p>
+
+<p align="center">
+  <img src="docs/images/case_architecture.svg" alt="FocusBot Case Architecture & Engineering Views" width="850">
+</p>
 
 ### Key Enclosure Features:
 - **Top-Down Serviceability**: The torso is split horizontally at $Z = 24.5\text{ mm}$ into a lower chassis tub (`Carcasa_Torso_Chasis`) and an upper hood (`Carcasa_Torso_Tapa`). Technicians can populate motors, battery, casters, and wire the Mainboard PCB with complete top-down clearance before sealing the assembly with 4 vertical corner M2 fasteners.
@@ -38,7 +50,13 @@ The robot is powered by a modular two-board architecture communicating through a
 ### 1. Mainboard PCB (`64.0 x 70.0 mm`, 2-Layer FR4)
 Acts as the central power, locomotion, and processing hub located in the lower chassis.
 
-![FocusBot Mainboard PCB Layout](docs/images/mainboard_pcb.svg)
+<p align="center">
+  <img src="docs/images/mainboard_3d_render.png" alt="FocusBot Mainboard 3D PCB Render" width="850">
+</p>
+
+<p align="center">
+  <img src="docs/images/mainboard_pcb.svg" alt="FocusBot Mainboard PCB Layout" width="850">
+</p>
 
 - **Microcontroller**: ESP32-S3-WROOM-1 (Dual-core 240 MHz Xtensa LX7, 16 MB Flash, 8 MB PSRAM, Wi-Fi 4, BLE 5.0).
 - **Power Subsystem**: Single-cell LiPo 3.7V / 500mAh battery, integrated TP4056 linear charger with USB-C 16-pin interface, reverse protection, and high-PSRR AP2112K-3.3 LDO (600 mA).
@@ -51,7 +69,13 @@ Acts as the central power, locomotion, and processing hub located in the lower c
 ### 2. Headboard PCB (`46.0 x 30.0 mm`, 2-Layer FR4)
 Acts as the sensory and perceptual face of FocusBot, mounted vertically inside the head unit.
 
-![FocusBot Headboard PCB Layout](docs/images/headboard_pcb.svg)
+<p align="center">
+  <img src="docs/images/headboard_3d_render.png" alt="FocusBot Headboard 3D PCB Render" width="850">
+</p>
+
+<p align="center">
+  <img src="docs/images/headboard_pcb.svg" alt="FocusBot Headboard PCB Layout" width="850">
+</p>
 
 - **Visual Interface**: 2.0" IPS LCD display (ST7789V3, 240x320 resolution, 4-wire SPI + backlight PWM control) mounted in a vibration-damped mechanical recess.
 - **Vision Subsystem**: Coaxial OV2640 2.0 Megapixel camera module interface with dedicated low-noise analog filtering for real-time edge AI inference and face tracking.
@@ -65,7 +89,9 @@ Acts as the sensory and perceptual face of FocusBot, mounted vertically inside t
 
 All printable components are pre-oriented with their flat mating face on the build plate ($Z_{min} = 0.00\text{ mm}$) and centered at $(0, 0)$ for **support-free, 1-click slicing**:
 
-![FocusBot 3D Printing Plate Layout](docs/images/3d_print_layout.svg)
+<p align="center">
+  <img src="docs/images/3d_print_layout.svg" alt="FocusBot 3D Printing Plate Layout" width="850">
+</p>
 
 ### Slicer Settings (FDM / SLA):
 - **Layer Height**: 0.16 mm (0.12 mm recommended for `Visor_Frontal` and `Aros_Cyan`).
