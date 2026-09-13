@@ -1,4 +1,4 @@
-# Guía de Impresión 3D: FocusBot / Goofy (Piezas Separadas y Orientadas)
+# Guía de Impresión 3D: FocusBot (Piezas Separadas y Orientadas)
 
 Todas las piezas han sido **pre-orientadas mecánicamente** con su cara plana sobre la cama ($Z=0.00\text{ mm}$) y centradas en $(0, 0)$. **No requieren rotación manual ni soportes internos**.
 

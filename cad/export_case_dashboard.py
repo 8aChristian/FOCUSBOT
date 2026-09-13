@@ -5,7 +5,7 @@ import os
 
 print(">>> [DASHBOARD RENDERER v12] Exporting FocusBot Case 2D Technical Views...", flush=True)
 
-fcstd_file = r"c:\Users\Christian Ochoa\Documents\antigravity\goofy-borg\cad\focusbot_case.FCStd"
+fcstd_file = r"c:\Users\Christian Ochoa\Documents\antigravity\focusbot-borg\cad\focusbot_case.FCStd"
 doc = FreeCAD.open(fcstd_file)
 
 exterior_names = [
@@ -109,7 +109,7 @@ dashboard_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 92
   <text x="630" y="871" fill="#94a3b8" font-size="12">• 4x M2 avellanados cabeza trasera 100% visibles • 4x M2 tapa torso • USB-C y switch SW1</text>
 </svg>'''
 
-out_svg = r"c:\Users\Christian Ochoa\Documents\antigravity\goofy-borg\cad\focusbot_case_dashboard.svg"
+out_svg = r"c:\Users\Christian Ochoa\Documents\antigravity\focusbot-borg\cad\focusbot_case_dashboard.svg"
 with open(out_svg, "w", encoding="utf-8") as f:
     f.write(dashboard_svg)
 print(f"[OK] Exported updated 2D Dashboard SVG: {out_svg}", flush=True)
