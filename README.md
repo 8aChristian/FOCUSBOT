@@ -1,7 +1,7 @@
 # FOCUSBOT: Open-Source Autonomous AI Desktop Companion Robot
 
 <p align="center">
-  <img src="docs/images/focusbot_3d_render.png" alt="FocusBot 3D Photorealistic Studio Render" width="850">
+  <img src="docs/images/focusbot_case_3d.png" alt="FocusBot 3D Mechatronic Enclosure Render" width="750">
 </p>
 
 <p align="center">
@@ -9,7 +9,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/Software_License-MIT-38bdf8.svg?style=for-the-badge" alt="MIT"></a>
   <img src="https://img.shields.io/badge/Status-Production%20Grade%20v12.0-34d399.svg?style=for-the-badge" alt="Production Grade">
   <a href="https://www.freecad.org/"><img src="https://img.shields.io/badge/CAD-FreeCAD%201.0%20OCC-a855f7.svg?style=for-the-badge" alt="FreeCAD"></a>
-  <a href="https://www.kicad.org/"><img src="https://img.shields.io/badge/EDA-KiCad%208.0-fbbf24.svg?style=for-the-badge" alt="KiCad 8.0"></a>
+  <a href="https://www.kicad.org/"><img src="https://img.shields.io/badge/EDA-KiCad%2010.0-fbbf24.svg?style=for-the-badge" alt="KiCad 10.0"></a>
   <a href="https://www.espressif.com/"><img src="https://img.shields.io/badge/Compute-ESP32--S3%20Xtensa%20LX7-ef4444.svg?style=for-the-badge" alt="ESP32-S3"></a>
 </p>
 
@@ -17,19 +17,15 @@
 
 ## 📖 Overview
 
-**FocusBot** is an ultra-compact, expressive, open-source desktop AI companion robot engineered for productivity, computer vision, focus coaching, and interactive robotics research. Built from the ground up under strict industrial mechatronic design standards (*Physics-First, Holistic DFA/DFM, Zero-Collision OCC Solid Geometry*), FocusBot fits full autonomous spatial locomotion, computer vision, two-way audio, and expressive screen feedback into an ultra-portable **8.0 cm** form factor.
+**FocusBot** is an ultra-compact, expressive, open-source desktop AI companion robot engineered for productivity, computer vision, focus coaching, and interactive robotics research. Built from the ground up under strict industrial mechatronic design standards (*Physics-First, Holistic DFA/DFM, Zero-Collision Solid Geometry*), FocusBot integrates autonomous spatial locomotion, computer vision, two-way digital audio, and expressive screen feedback into an ultra-portable **8.0 cm** form factor.
 
-FocusBot is **100% Open Source Hardware & Software**, designed for accessible manufacturing via standard consumer 3D printers (FDM/SLA) and 2-layer standard PCB fabrication (JLCPCB, PCBWay, etc.).
+FocusBot is **100% Open Source Hardware & Software**, designed for accessible manufacturing via standard consumer 3D printers (FDM/SLA) and 2-layer standard PCB fabrication (JLCPCB, PCBWay).
 
 ---
 
-## 📐 Mechanical Architecture & DFA Top-Down Assembly
+## 📐 Mechanical Architecture & DFA Enclosure
 
 FocusBot features a custom **Top-Down DFA (Design for Assembly)** monocoque architecture engineered in FreeCAD with parametric Open CASCADE solid modeling:
-
-<p align="center">
-  <img src="docs/images/focusbot_3d_exploded.png" alt="FocusBot 3D Exploded Assembly Render" width="850">
-</p>
 
 <p align="center">
   <img src="docs/images/case_architecture.svg" alt="FocusBot Case Architecture & Engineering Views" width="850">
@@ -37,9 +33,9 @@ FocusBot features a custom **Top-Down DFA (Design for Assembly)** monocoque arch
 
 ### Key Enclosure Features:
 - **Top-Down Serviceability**: The torso is split horizontally at $Z = 24.5\text{ mm}$ into a lower chassis tub (`Carcasa_Torso_Chasis`) and an upper hood (`Carcasa_Torso_Tapa`). Technicians can populate motors, battery, casters, and wire the Mainboard PCB with complete top-down clearance before sealing the assembly with 4 vertical corner M2 fasteners.
-- **Biomorphic Head Unit**: Integrates a flush-mounted 2.0" IPS display, coaxial OV2640 camera aperture, acoustic 37-hole tuned speaker grille, integrated expressive ears, and 4 rear counterbored M2 screw sockets accessible from the exterior.
+- **Biomorphic Head Unit**: Integrates a flush-mounted 2.0" IPS display, coaxial OV2640 camera aperture, acoustic tuned speaker grille, integrated expressive ears, and 4 rear counterbored M2 screw sockets accessible from the exterior.
 - **Kinematic Ground Plane ($Z = 0.00\text{ mm}$)**: 4-point coplanar ground contact consisting of two $\varnothing 34.0\text{ mm}$ smooth cylindrical traction wheels ($R = 17.00\text{ mm}$) and two precision $\varnothing 8.0\text{ mm}$ omnidirectional stainless steel ball casters, guaranteeing zero-wobble differential steering.
-- **Zero Collision Guarantee**: 100% verified via boolean intersection algorithms across all 22 components ($0.0000\text{ mm}^3$ mutual collision).
+- **Zero Collision Guarantee**: 100% verified via boolean intersection algorithms across all components ($0.0000\text{ mm}^3$ mutual collision).
 
 ---
 
@@ -51,18 +47,15 @@ The robot is powered by a modular two-board architecture communicating through a
 Acts as the central power, locomotion, and processing hub located in the lower chassis.
 
 <p align="center">
-  <img src="docs/images/mainboard_3d_render.png" alt="FocusBot Mainboard 3D PCB Render" width="850">
+  <img src="docs/images/mainboard_3d.png" alt="FocusBot Mainboard 3D View" width="420">&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/images/mainboard_routing.png" alt="FocusBot Mainboard 2D Routing" width="420">
 </p>
 
-<p align="center">
-  <img src="docs/images/mainboard_pcb.svg" alt="FocusBot Mainboard PCB Layout" width="850">
-</p>
-
-- **Microcontroller**: ESP32-S3-WROOM-1 (Dual-core 240 MHz Xtensa LX7, 16 MB Flash, 8 MB PSRAM, Wi-Fi 4, BLE 5.0).
-- **Power Subsystem**: Single-cell LiPo 3.7V / 500mAh battery, integrated TP4056 linear charger with USB-C 16-pin interface, reverse protection, and high-PSRR AP2112K-3.3 LDO (600 mA).
-- **Motor Control**: Texas Instruments DRV8833 dual H-bridge motor driver with current-limiting sense resistors, driving two N20 micro metal gearmotors (PWM control, forward/reverse/brake).
-- **Expansion & Diagnostics**: USB-C Native D+/D- USB serial/JTAG for high-speed flashing and debugging, dedicated SW1 power slide switch, and RGB status chest indicators.
-- **Routing & Signal Integrity**: Dedicated unbroken ground plane on bottom layer with continuous polygon pours, 0.40 mm signal traces, 0.80 mm power rails, and teardrop-reinforced vias. 100% DRC clean.
+- **Microcontroller**: ESP32-S3-WROOM-1 (Dual-core 240 MHz Xtensa LX7, 16 MB Flash, 8 MB Octal PSRAM, Wi-Fi 4, BLE 5.0).
+- **Power Subsystem**: Single-cell LiPo 3.7V / 500mAh battery, integrated TP4056 linear charger with USB-C 16-pin interface, DW01A + FS8205A battery protection, and high-efficiency SY8089 buck converter.
+- **Motor Control**: Texas Instruments DRV8833 dual H-bridge motor driver (PWM control, forward/reverse/brake) operating at 20 kHz (ultrasonic, zero audible coil whine).
+- **Expansion & Diagnostics**: USB-C Native D+/D- USB serial/JTAG for high-speed flashing and debugging without external programmers.
+- **Antenna Keepout Zone**: Strict RF isolation zone complying 100% with Espressif hardware design guidelines (0 copper, 0 tracks, 0 vias inside antenna radiation perimeter).
 
 ---
 
@@ -70,18 +63,37 @@ Acts as the central power, locomotion, and processing hub located in the lower c
 Acts as the sensory and perceptual face of FocusBot, mounted vertically inside the head unit.
 
 <p align="center">
-  <img src="docs/images/headboard_3d_render.png" alt="FocusBot Headboard 3D PCB Render" width="850">
+  <img src="docs/images/headboard_3d.png" alt="FocusBot Headboard 3D View" width="440">&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/images/headboard_routing.png" alt="FocusBot Headboard 2D Routing" width="400">
 </p>
 
-<p align="center">
-  <img src="docs/images/headboard_pcb.svg" alt="FocusBot Headboard PCB Layout" width="850">
-</p>
+- **Visual Interface**: 2.0" IPS LCD display (ST7789, 240x320 resolution, 4-wire SPI) for procedural eye animation rendering.
+- **Vision Subsystem**: OV2640 2.0 Megapixel camera module interface for real-time edge AI vision and anti-procrastination monitoring.
+- **Audio Output**: Maxim Integrated MAX98357A I2S Class D audio amplifier delivering into a 1511 box speaker with an acoustic compression cavity.
+- **Audio Input**: INMP441 high-precision omnidirectional I2S MEMS microphone for voice commands, wake-word detection, and head-tap petting detection.
+- **Pan Turntable Actuator**: Drive port for SG90 micro servo mounted inside the head, engaging the torso neck horn for smooth horizontal scanning.
 
-- **Visual Interface**: 2.0" IPS LCD display (ST7789V3, 240x320 resolution, 4-wire SPI + backlight PWM control) mounted in a vibration-damped mechanical recess.
-- **Vision Subsystem**: Coaxial OV2640 2.0 Megapixel camera module interface with dedicated low-noise analog filtering for real-time edge AI inference and face tracking.
-- **Audio Output**: Maxim Integrated MAX98357A I2S Class D audio amplifier delivering 3.2W into a 1511 box speaker with an acoustic compression back-chamber.
-- **Audio Input**: INMP441 high-precision omnidirectional I2S MEMS microphone with bottom-port acoustic coupling for voice commands and sound localization.
-- **Pan Turntable Actuator**: Drive port for SG90 micro servo mounted inverted inside the head, engaging the fixed torso neck horn.
+---
+
+## 💻 Production Firmware Architecture ([`firmware/`](firmware/))
+
+FocusBot runs a production-grade C++/Arduino ESP32 firmware configured in PlatformIO with modular architecture:
+
+### 1. Modos de Operación
+* **Wake-Up & Self-Test:** Al conectar la alimentación, FocusBot ejecuta un diagnóstico en pantalla ST7789 comprobando la cámara OV2640, audio I2S, micrófono MEMS, motores DRV8833, servo SG90 y batería LiPo. Al finalizar con éxito, reproduce un acorde armónico ascendente C5-E5-G5-C6 y abre los ojos gradualmente.
+* **Default Mode (Exploración):** Paseo autónomo por el escritorio con motores controlados por PWM a 20 kHz (inaudibles), movimientos curiosos de cabeza y parpadeo procedural con sacadas de mirada.
+* **Focus Mode (IA Anti-Procrastinación):** Monitoreo continuo mediante visión artificial. Si el usuario se levanta o mira el celular constantemente, FocusBot emite una alarma sonora y pone carita de disgusto/alerta, registrando el tiempo productivo (*Focus Score*).
+* **LLM Companion (App Móvil):** Servicio BLE GATT para conectar con la app móvil (iOS/Android), permitiendo entablar conversaciones de voz mediante modelos de lenguaje (OpenAI ChatGPT, Google Gemini, Anthropic Claude).
+* **Micro-Features:** Sensor acústico de caricias (*Head-Tap Petting*): al tocar suavemente su cabeza, FocusBot responde con ojos de corazón (`EXPR_HEART`) y ronroneo sintetizado (`SND_PETTED_PURR`).
+
+### 2. Flasheo del Microcontrolador
+> [!IMPORTANT]
+> **El firmware se sube DESPUÉS de soldar.**
+> El ESP32-S3 integra USB nativo en silicio (`GPIO19: D-`, `GPIO20: D+`) ruteado directamente al puerto USB-C de la placa principal. No requiere programadores externos ni zócalos especiales: solo conecta el cable USB-C a la PC y ejecuta:
+> ```bash
+> cd firmware
+> pio run -t upload
+> ```
 
 ---
 
@@ -122,10 +134,12 @@ cad/3d_print_ready/
 | Ref | Component | Description | Quantity | Package / Footprint |
 | :--- | :--- | :--- | :---: | :--- |
 | **U1** | ESP32-S3-WROOM-1 | Dual-Core 240MHz MCU, 16MB Flash, 8MB PSRAM | 1 | SMD Module |
-| **U2** | DRV8833PWP | Dual H-Bridge Motor Driver (1.5A RMS / 2A Peak) | 1 | HTSSOP-16 |
-| **U3** | TP4056 | 1A Standalone LiPo Linear Battery Charger | 1 | SOP-8-PP |
-| **U4** | AP2112K-3.3 | Ultra-Low Dropout 600mA Linear Regulator | 1 | SOT-23-5 |
-| **U5** | MAX98357A | 3.2W I2S Class D Audio Amplifier | 1 | QFN-16 |
+| **U6** | DRV8833PWP | Dual H-Bridge Motor Driver (1.5A RMS / 2A Peak) | 1 | HTSSOP-16 |
+| **U2** | TP4056 | 1A Standalone LiPo Linear Battery Charger | 1 | SOP-8-PP |
+| **U3/U4** | DW01A + FS8205A | LiPo Battery Overcharge/Overdischarge Protection | 1 | SOT-23-6 / TSSOP-8 |
+| **U5** | SY8089AAAC | High-Efficiency 2A Synchronous Step-Down Regulator | 1 | SOT-23-5 |
+| **U7** | MAX98357A | 3.2W I2S Class D Audio Amplifier | 1 | QFN-16 |
+| **U8** | MPU-6050 | 6-DOF Inertial Measurement Unit (Gyro + Accel) | 1 | QFN-24 |
 | **M1, M2** | N20 Motors | Micro Metal DC Gearmotor, 6V 300RPM (1:100), D-shaft | 2 | N20 Standard |
 | **SRV1** | SG90 / MG90S | 9g Micro Servo Motor (Pan Axis) | 1 | Custom Head Pocket |
 | **DISP1**| ST7789 2.0" IPS | 2.0 inch LCD Display Module, 240x320 SPI | 1 | Flush Front Bezel |
@@ -133,8 +147,7 @@ cad/3d_print_ready/
 | **MIC1** | INMP441 | I2S Omnidirectional MEMS Microphone | 1 | Bottom Acoustic Port |
 | **SPK1** | 1511 Speaker | 8 Ohm 1W Miniature Box Speaker (15x11x3.5 mm) | 1 | Head Grille Cavity |
 | **BAT1** | LiPo 1S 3.7V | Rechargeable Lithium Polymer Battery (500mAh) | 1 | 38x20x7 mm Base Bay |
-| **J1** | USB-C Receptacle | USB Type-C 16-Pin Mid-Mount / SMD (Power & JTAG) | 1 | USB-C 16P |
-| **SW1** | Slide Switch | SPDT Sub-miniature Slide Switch (Power) | 1 | PCM12SMTR |
+| **J_USB** | USB-C Receptacle | USB Type-C 16-Pin Mid-Mount / SMD (Power & JTAG) | 1 | USB-C 16P |
 
 ### Hardware & Fasteners
 | Type | Specification | Usage | Quantity |

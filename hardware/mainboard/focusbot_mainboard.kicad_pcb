@@ -1919,7 +1919,7 @@
 			)
 		)
 		(fp_text user "KEEP-OUT ZONE"
-			(at 0 -18.92 0)
+			(at 0.5 -17 0)
 			(layer "Cmts.User")
 			(uuid "70b54b3d-5506-4545-a2c7-d4e66ecf8078")
 			(effects
@@ -13203,7 +13203,7 @@
 		(uuid "63d368db-9678-46be-ade2-2cd74211e6b5")
 	)
 	(gr_text "FOCUSBOT MAINBOARD v12.0"
-		(at 153 132.5 0)
+		(at 168 133.5 0)
 		(layer "F.SilkS")
 		(uuid "1a091bf2-ed76-4968-bd43-acd261b2244e")
 		(effects
