@@ -13202,6 +13202,28 @@
 		(layer "Edge.Cuts")
 		(uuid "63d368db-9678-46be-ade2-2cd74211e6b5")
 	)
+	(gr_text "OPEN-SOURCE HARDWARE - CERN-OHL-S"
+		(at 150 131 0)
+		(layer "F.SilkS")
+		(uuid "f6ed4042-21c3-416c-90a0-cbb66a22f4cd")
+		(effects
+			(font
+				(size 0.9 0.9)
+				(thickness 0.15)
+			)
+		)
+	)
+	(gr_text "FOCUSBOT MAINBOARD v12.0"
+		(at 150 128 0)
+		(layer "F.SilkS")
+		(uuid "1a091bf2-ed76-4968-bd43-acd261b2244e")
+		(effects
+			(font
+				(size 1.2 1.2)
+				(thickness 0.2)
+			)
+		)
+	)
 	(segment
 		(start 128.225 114)
 		(end 132.027 110.198)
@@ -23356,28 +23378,4 @@
 		)
 	)
 	(embedded_fonts no)
-	(gr_text "FOCUSBOT MAINBOARD v12.0"
-		(at 150 128)
-		(layer "F.SilkS")
-		(uuid "fbc-mb-title-01")
-		(effects
-			(font
-				(size 1.2 1.2)
-				(thickness 0.2)
-			)
-			(justify center)
-		)
-	)
-	(gr_text "OPEN-SOURCE HARDWARE • CERN-OHL-S"
-		(at 150 131)
-		(layer "F.SilkS")
-		(uuid "fbc-mb-oshw-01")
-		(effects
-			(font
-				(size 0.9 0.9)
-				(thickness 0.15)
-			)
-			(justify center)
-		)
-	)
 )
