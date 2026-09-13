@@ -99,11 +99,7 @@ FocusBot runs a production-grade C++/Arduino ESP32 firmware configured in Platfo
 
 ## 🖨️ 3D Printing & Manufacturing Guide
 
-All printable components are pre-oriented with their flat mating face on the build plate ($Z_{min} = 0.00\text{ mm}$) and centered at $(0, 0)$ for **support-free, 1-click slicing**:
-
-<p align="center">
-  <img src="docs/images/3d_print_layout.svg" alt="FocusBot 3D Printing Plate Layout" width="850">
-</p>
+All printable components are pre-oriented with their flat mating face on the build plate ($Z_{min} = 0.00\text{ mm}$) and centered at $(0, 0)$ for **support-free, 1-click slicing**.
 
 ### Slicer Settings (FDM / SLA):
 - **Layer Height**: 0.16 mm (0.12 mm recommended for `Visor_Frontal` and `Aros_Cyan`).
