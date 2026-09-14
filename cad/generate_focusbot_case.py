@@ -74,10 +74,12 @@ head_r_raw = head_solid.cut(cutter_front)
 
 head_f = head_f_raw
 
-# Cavidad interna frontal con esquinas redondeadas (48.0mm de ancho: holgura limpia para PCB 46mm y LCD 45mm)
-cav_f = Part.makeBox(48.0, 16.5, 31.0, FreeCAD.Vector(-24.0, 0.0, 43.0))
-c_edges = [e for e in cav_f.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
-cav_f = cav_f.makeFillet(2.5, c_edges)
+# Cavidad interna frontal con soporte perimetral sólido para tornillería M2
+# Zona profunda (Y in [7.0, 16.5]): 48.0mm de ancho para alojar PCB 46mm y LCD 45mm
+cav_f_deep = Part.makeBox(48.0, 9.5, 31.0, FreeCAD.Vector(-24.0, 7.0, 43.0))
+# Zona de embocadura (Y in [0.0, 7.0]): 36.0mm de ancho (paredes sólidas continuas de 10.5mm en laterales)
+cav_f_entry = Part.makeBox(36.0, 7.0, 31.0, FreeCAD.Vector(-18.0, 0.0, 43.0))
+cav_f = cav_f_deep.fuse(cav_f_entry)
 head_f = head_f.cut(cav_f)
 
 # Ventana activa frontal para Pantalla 2.0" ST7789V integrada directamente en la carcasa (43.5 x 23.0mm, R=2.0mm)
@@ -104,14 +106,12 @@ rail_l = Part.makeBox(1.5, 1.8, 29.5, FreeCAD.Vector(-24.5, 10.6, 43.5))
 rail_r = Part.makeBox(1.5, 1.8, 29.5, FreeCAD.Vector(23.0, 10.6, 43.5))
 head_f = head_f.cut(rail_l).cut(rail_r)
 
-# Pilares roscados de cierre M2 100% CERRADOS CON REFUERZO LATERAL (R=2.2mm, CERO CORTES C, CERO PEGOTES)
+# Taladros roscados M2 100% integrados en paredes sólidas frontales (X = ±23.0, Z = 45.5 & 71.5)
+# ¡Cero tubos flotantes, cero gussets, cero pegotes! Perforación directa en pared lateral sólida
 h_boss_coords = [(-23.0, 71.5), (23.0, 71.5), (-23.0, 45.5), (23.0, 45.5)]
 for bx, bz in h_boss_coords:
-    boss = Part.makeCylinder(2.2, 7.0, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
-    sign = -1.0 if bx < 0 else 1.0
-    gusset = Part.makeBox(1.5, 7.0, 4.4, FreeCAD.Vector(bx if sign > 0 else bx - 1.5, 0.0, bz - 2.2))
     pilot = Part.makeCylinder(0.85, 6.0, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
-    head_f = head_f.fuse(boss).fuse(gusset).cut(pilot)
+    head_f = head_f.cut(pilot)
 
 # Copa hembra de tornamesa en cuello inferior (Dia 18.6mm, Altura 3.5mm, Z in [37.5, 41.0])
 neck_cup_f = Part.makeCylinder(9.3, 3.5, FreeCAD.Vector(0.0, 0.0, 37.5), FreeCAD.Vector(0, 0, 1))
@@ -159,7 +159,9 @@ ear_l = make_cute_ear(-18.0, is_left=True)
 ear_r = make_cute_ear(18.0, is_left=False)
 head_r = head_r.fuse(ear_l).fuse(ear_r)
 
-cav_r = Part.makeBox(48.0, 16.5, 31.0, FreeCAD.Vector(-24.0, -16.5, 43.0))
+# Cavidad interna trasera: 36.0mm de ancho (holgura limpia para servo SG90 y speaker 1511)
+# Deja paredes laterales 100% continuas y sólidas de 10.5mm donde se alojan los tornillos pasantes
+cav_r = Part.makeBox(36.0, 16.5, 31.0, FreeCAD.Vector(-18.0, -16.5, 43.0))
 cr_edges = [e for e in cav_r.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
 cav_r = cav_r.makeFillet(2.5, cr_edges)
 head_r = head_r.cut(cav_r)
@@ -193,14 +195,12 @@ for sx in [-14.0, 14.0]:
     s_hole = Part.makeCylinder(0.9, 10.0, FreeCAD.Vector(sx, -6.0, 56.0), FreeCAD.Vector(0, 0, 1))
     head_r = head_r.cut(s_hole)
 
-# Pilares traseros M2 100% CERRADOS CON REFUERZO LATERAL (emparejamiento perfecto con frontal en Y=0.0)
+# Taladros pasantes y avellanados M2 a través de las paredes sólidas traseras
+# ¡Cero tubos flotantes, cero gussets, cero escalones! Perforaciones cilíndricas 100% limpias
 for bx, bz in h_boss_coords:
-    pillar = Part.makeCylinder(2.2, 16.5, FreeCAD.Vector(bx, -16.5, bz), FreeCAD.Vector(0, 1, 0))
-    sign = -1.0 if bx < 0 else 1.0
-    gusset = Part.makeBox(1.5, 16.5, 4.4, FreeCAD.Vector(bx if sign > 0 else bx - 1.5, -16.5, bz - 2.2))
     thru = Part.makeCylinder(1.15, 25.0, FreeCAD.Vector(bx, -21.0, bz), FreeCAD.Vector(0, 1, 0))
     cb   = Part.makeCylinder(2.0, 3.0, FreeCAD.Vector(bx, -20.5, bz), FreeCAD.Vector(0, 1, 0))
-    head_r = head_r.fuse(pillar).fuse(gusset).cut(thru).cut(cb)
+    head_r = head_r.cut(thru).cut(cb)
 
 # Copa hembra de tornamesa en cabeza trasera
 neck_cup_r = Part.makeCylinder(9.3, 3.5, FreeCAD.Vector(0.0, 0.0, 37.5), FreeCAD.Vector(0, 0, 1))
