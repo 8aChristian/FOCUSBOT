@@ -74,8 +74,8 @@ head_r_raw = head_solid.cut(cutter_front)
 
 head_f = head_f_raw
 
-# Cavidad interna frontal con esquinas redondeadas
-cav_f = Part.makeBox(52.0, 16.5, 31.0, FreeCAD.Vector(-26.0, 0.0, 43.0))
+# Cavidad interna frontal con esquinas redondeadas (48.0mm de ancho: holgura limpia para PCB 46mm y LCD 45mm)
+cav_f = Part.makeBox(48.0, 16.5, 31.0, FreeCAD.Vector(-24.0, 0.0, 43.0))
 c_edges = [e for e in cav_f.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
 cav_f = cav_f.makeFillet(2.5, c_edges)
 head_f = head_f.cut(cav_f)
@@ -99,17 +99,19 @@ head_f = head_f.cut(lcd_pocket)
 cam_pocket = Part.makeBox(8.5, 3.0, 6.5, FreeCAD.Vector(-4.25, 13.5, 69.2))
 head_f = head_f.cut(cam_pocket)
 
-# Ranuras guia para Headboard PCB (46.0 x 1.6 x 30.0mm en Y = 11.5mm)
-rail_l = Part.makeBox(1.8, 1.9, 30.0, FreeCAD.Vector(-24.5, 11.3, 43.5))
-rail_r = Part.makeBox(1.8, 1.9, 30.0, FreeCAD.Vector(22.7, 11.3, 43.5))
+# Ranuras guia para Headboard PCB (ranuras limpias de 1.5x1.8mm en la pared lateral, Y = 11.5mm)
+rail_l = Part.makeBox(1.5, 1.8, 29.5, FreeCAD.Vector(-24.5, 10.6, 43.5))
+rail_r = Part.makeBox(1.5, 1.8, 29.5, FreeCAD.Vector(23.0, 10.6, 43.5))
 head_f = head_f.cut(rail_l).cut(rail_r)
 
-# Pilares roscados de cierre M2 desacoplados del frontal (longitud 7.0mm, nunca tocan cara frontal)
-h_boss_coords = [(-25.2, 73.0), (25.2, 73.0), (-25.2, 44.5), (25.2, 44.5)]
+# Pilares roscados de cierre M2 100% CERRADOS CON REFUERZO LATERAL (R=2.2mm, CERO CORTES C, CERO PEGOTES)
+h_boss_coords = [(-23.0, 71.5), (23.0, 71.5), (-23.0, 45.5), (23.0, 45.5)]
 for bx, bz in h_boss_coords:
-    boss = Part.makeCylinder(1.8, 7.0, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
-    pilot = Part.makeCylinder(0.85, 8.0, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
-    head_f = head_f.fuse(boss.cut(pilot))
+    boss = Part.makeCylinder(2.2, 7.0, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
+    sign = -1.0 if bx < 0 else 1.0
+    gusset = Part.makeBox(1.5, 7.0, 4.4, FreeCAD.Vector(bx if sign > 0 else bx - 1.5, 0.0, bz - 2.2))
+    pilot = Part.makeCylinder(0.85, 6.0, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
+    head_f = head_f.fuse(boss).fuse(gusset).cut(pilot)
 
 # Copa hembra de tornamesa en cuello inferior (Dia 18.6mm, Altura 3.5mm, Z in [37.5, 41.0])
 neck_cup_f = Part.makeCylinder(9.3, 3.5, FreeCAD.Vector(0.0, 0.0, 37.5), FreeCAD.Vector(0, 0, 1))
@@ -157,13 +159,13 @@ ear_l = make_cute_ear(-18.0, is_left=True)
 ear_r = make_cute_ear(18.0, is_left=False)
 head_r = head_r.fuse(ear_l).fuse(ear_r)
 
-cav_r = Part.makeBox(52.0, 17.0, 31.0, FreeCAD.Vector(-26.0, -17.0, 43.0))
+cav_r = Part.makeBox(48.0, 16.5, 31.0, FreeCAD.Vector(-24.0, -16.5, 43.0))
 cr_edges = [e for e in cav_r.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
 cav_r = cav_r.makeFillet(2.5, cr_edges)
 head_r = head_r.cut(cav_r)
 
-# Cuna de alojamiento para Parlante 1511 en pared trasera
-spk_pocket = Part.makeBox(15.6, 2.5, 11.6, FreeCAD.Vector(-7.8, -18.5, 52.2))
+# Cuna integrada para Parlante 1511 (sin clips externos tipo pegote)
+spk_pocket = Part.makeBox(15.4, 3.8, 11.4, FreeCAD.Vector(-7.7, -18.5, 52.3))
 head_r = head_r.cut(spk_pocket)
 
 # Rejilla acustica trasera para parlante 1511 a Z = 58.0mm
@@ -180,11 +182,6 @@ for i in range(18):
     holes.append(Part.makeCylinder(0.7, 6.0, FreeCAD.Vector(10.5*math.cos(ang), -21.0, spk_cz + 10.5*math.sin(ang)), FreeCAD.Vector(0, 1, 0)))
 head_r = head_r.cut(Part.makeCompound(holes))
 
-# Clips de retencion para parlante 1511 con holgura lateral
-clip_l = Part.makeBox(1.5, 3.5, 11.0, FreeCAD.Vector(-9.2, -16.0, 52.5))
-clip_r = Part.makeBox(1.5, 3.5, 11.0, FreeCAD.Vector(7.7, -16.0, 52.5))
-head_r = head_r.fuse(clip_l).fuse(clip_r)
-
 # Alojamiento de precision para Servo SG90 (cuerpo, aletas y torre de engranaje)
 s_pocket = Part.makeBox(23.6, 13.0, 23.5, FreeCAD.Vector(-11.8, -12.5, 44.0))
 s_flange_pocket = Part.makeBox(33.0, 13.0, 3.0, FreeCAD.Vector(-16.5, -12.5, 59.5))
@@ -196,12 +193,14 @@ for sx in [-14.0, 14.0]:
     s_hole = Part.makeCylinder(0.9, 10.0, FreeCAD.Vector(sx, -6.0, 56.0), FreeCAD.Vector(0, 0, 1))
     head_r = head_r.cut(s_hole)
 
-# Pilares perimetrales de union de cabeza CON ORIFICIOS Y AVELLANADOS 100% VISIBLES DESDE EL EXTERIOR
+# Pilares traseros M2 100% CERRADOS CON REFUERZO LATERAL (emparejamiento perfecto con frontal en Y=0.0)
 for bx, bz in h_boss_coords:
-    r_pillar = Part.makeCylinder(1.8, 16.5, FreeCAD.Vector(bx, -16.5, bz), FreeCAD.Vector(0, 1, 0))
+    pillar = Part.makeCylinder(2.2, 16.5, FreeCAD.Vector(bx, -16.5, bz), FreeCAD.Vector(0, 1, 0))
+    sign = -1.0 if bx < 0 else 1.0
+    gusset = Part.makeBox(1.5, 16.5, 4.4, FreeCAD.Vector(bx if sign > 0 else bx - 1.5, -16.5, bz - 2.2))
     thru = Part.makeCylinder(1.15, 25.0, FreeCAD.Vector(bx, -21.0, bz), FreeCAD.Vector(0, 1, 0))
-    cb   = Part.makeCylinder(2.2, 3.0, FreeCAD.Vector(bx, -20.5, bz), FreeCAD.Vector(0, 1, 0))
-    head_r = head_r.fuse(r_pillar).cut(thru).cut(cb)
+    cb   = Part.makeCylinder(2.0, 3.0, FreeCAD.Vector(bx, -20.5, bz), FreeCAD.Vector(0, 1, 0))
+    head_r = head_r.fuse(pillar).fuse(gusset).cut(thru).cut(cb)
 
 # Copa hembra de tornamesa en cabeza trasera
 neck_cup_r = Part.makeCylinder(9.3, 3.5, FreeCAD.Vector(0.0, 0.0, 37.5), FreeCAD.Vector(0, 0, 1))
@@ -266,19 +265,6 @@ usb_throat = Part.makeBox(11.0, 8.0, 5.0, FreeCAD.Vector(-5.5, -40.0, 24.2))
 sw_slot   = Part.makeBox(9.5, 8.0, 5.0, FreeCAD.Vector(-20.0, -40.0, 24.5))
 torso_solid = torso_solid.cut(usb_throat).cut(sw_slot)
 
-# 4x Columnas verticales de cierre en esquinas para fijar la Tapa Superior al Chasis
-tboss_coords = [(-32.0, 30.5), (32.0, 30.5), (-32.0, -30.5), (32.0, -30.5)]
-for bx, by in tboss_coords:
-    pillar = Part.makeCylinder(2.4, 37.5, FreeCAD.Vector(bx, by, 3.5), FreeCAD.Vector(0, 0, 1))
-    torso_solid = torso_solid.fuse(pillar)
-
-# Taladros pasantes y avellanados en la Tapa Superior + taladros piloto en el Chasis
-for bx, by in tboss_coords:
-    thru = Part.makeCylinder(1.15, 20.0, FreeCAD.Vector(bx, by, 25.0), FreeCAD.Vector(0, 0, 1))
-    cb   = Part.makeCylinder(2.2, 3.0, FreeCAD.Vector(bx, by, 38.5), FreeCAD.Vector(0, 0, 1))
-    pilot = Part.makeCylinder(0.9, 12.0, FreeCAD.Vector(bx, by, 16.0), FreeCAD.Vector(0, 0, 1))
-    torso_solid = torso_solid.cut(thru).cut(cb).cut(pilot)
-
 # BIPARTICIÓN HORIZONTAL DFA (TOP-DOWN):
 # Partición a Z = 24.5mm.
 # Chasis Base: Z in [3.5, 24.5mm] -> aloja motores, batería, casters y soporta la PCB a Z=23.5mm
@@ -290,12 +276,16 @@ cutter_bot = Part.makeBox(w_t + 20.0, d_t + 20.0, 25.0, FreeCAD.Vector(-w_t/2 - 
 torso_tapa = torso_solid.cut(cutter_bot)
 torso_base = torso_solid.cut(cutter_top)
 
-# Cavidades internas Chasis Base
-cav_base = Part.makeBox(68.0, 71.0, 20.0, FreeCAD.Vector(-34.0, -35.5, 5.5))
+# Cavidades internas Chasis Base (65.5 x 71.5mm: holgura perimetral limpia de 0.75mm para PCB 64x70mm)
+cav_base = Part.makeBox(65.5, 71.5, 20.0, FreeCAD.Vector(-32.75, -35.75, 5.5))
+cb_edges = [e for e in cav_base.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
+cav_base = cav_base.makeFillet(2.5, cb_edges)
 torso_base = torso_base.cut(cav_base)
 
 # Cavidades internas Tapa Superior
-cav_tapa = Part.makeBox(68.0, 71.0, 14.0, FreeCAD.Vector(-34.0, -35.5, 24.5))
+cav_tapa = Part.makeBox(65.5, 71.5, 14.0, FreeCAD.Vector(-32.75, -35.75, 24.5))
+ct_edges = [e for e in cav_tapa.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
+cav_tapa = cav_tapa.makeFillet(2.5, ct_edges)
 torso_tapa = torso_tapa.cut(cav_tapa)
 
 # Cunas / Saddles N20 en Chasis Base
@@ -303,17 +293,26 @@ saddle_l = Part.makeBox(24.5, 13.0, 6.5, FreeCAD.Vector(-28.5, -6.5, 5.5))
 saddle_r = Part.makeBox(24.5, 13.0, 6.5, FreeCAD.Vector(4.0, -6.5, 5.5))
 torso_base = torso_base.fuse(saddle_l).fuse(saddle_r)
 
-# Torretas / Standoffs Mainboard PCB en Chasis Base (MH1-MH4 a ±26.0, ±28.0, soporte en Z=23.5mm)
-for sx, sy in [(-26.0, 28.0), (26.0, 28.0), (-26.0, -28.0), (26.0, -28.0)]:
-    p = Part.makeCylinder(2.75, 18.5, FreeCAD.Vector(sx, sy, 5.0), FreeCAD.Vector(0, 0, 1)).cut(Part.makeCylinder(0.9, 7.0, FreeCAD.Vector(sx, sy, 17.5), FreeCAD.Vector(0, 0, 1)))
-    torso_base = torso_base.fuse(p)
+# Standoffs de fijacion unificada Mainboard PCB + Cierre Tapa (MH1-MH4 a ±26.0, ±28.0)
+# Cero colisiones con PCB, cero pilares seccionados: Sujecion simultanea de PCB y Tapa con 4 tornillos M2
+standoff_coords = [(-26.0, 28.0), (26.0, 28.0), (-26.0, -28.0), (26.0, -28.0)]
+for sx, sy in standoff_coords:
+    p = Part.makeCylinder(2.5, 18.5, FreeCAD.Vector(sx, sy, 5.0), FreeCAD.Vector(0, 0, 1))
+    pilot = Part.makeCylinder(0.85, 10.0, FreeCAD.Vector(sx, sy, 14.0), FreeCAD.Vector(0, 0, 1))
+    torso_base = torso_base.fuse(p).cut(pilot)
+
+for sx, sy in standoff_coords:
+    p_tapa = Part.makeCylinder(2.4, 15.9, FreeCAD.Vector(sx, sy, 25.1), FreeCAD.Vector(0, 0, 1))
+    thru = Part.makeCylinder(1.15, 20.0, FreeCAD.Vector(sx, sy, 24.0), FreeCAD.Vector(0, 0, 1))
+    cb = Part.makeCylinder(2.0, 3.0, FreeCAD.Vector(sx, sy, 38.5), FreeCAD.Vector(0, 0, 1))
+    torso_tapa = torso_tapa.fuse(p_tapa).cut(thru).cut(cb)
 
 # Bahía LiPo 1S en suelo del Chasis Base
 lipo_bay = Part.makeBox(40.0, 21.0, 7.5, FreeCAD.Vector(-20.0, -24.0, 4.5))
 torso_base = torso_base.cut(lipo_bay)
 
-add_part(torso_base, "Carcasa_Torso_Chasis", "4_Carcasa_Torso_Chasis", COLOR_BODY_CREAM)
-add_part(torso_tapa,   "Carcasa_Torso_Tapa",   "5_Carcasa_Torso_Tapa",   COLOR_BODY_CREAM)
+add_part(torso_base, "Carcasa_Torso_Chasis", "3_Carcasa_Torso_Chasis", COLOR_BODY_CREAM)
+add_part(torso_tapa,   "Carcasa_Torso_Tapa",   "4_Carcasa_Torso_Tapa",   COLOR_BODY_CREAM)
 
 # ==============================================================================
 # 5. RUEDAS DE TRACCION (LISAS, CONTACTO SUELO Z = 0.00mm, SIN RECTANGULOS)
@@ -412,7 +411,7 @@ add_part(lipo, "Interno_Bateria_LiPo", "Bateria_LiPo_500mAh", COLOR_GOLD_LIPO)
 # Mainboard PCB: 64.0 x 70.0 x 1.6mm solida, instalada en Z = 23.5mm
 mainboard = Part.makeBox(64.0, 70.0, 1.6, FreeCAD.Vector(-32.0, -35.0, 23.5))
 mb_edges = [e for e in mainboard.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
-mainboard = mainboard.makeFillet(2.0, mb_edges)
+mainboard = mainboard.makeFillet(3.0, mb_edges)
 
 for hx, hy in [(-26.0, 28.0), (26.0, 28.0), (-26.0, -28.0), (26.0, -28.0)]:
     m_hole = Part.makeCylinder(1.25, 4.0, FreeCAD.Vector(hx, hy, 22.5), FreeCAD.Vector(0, 0, 1))
