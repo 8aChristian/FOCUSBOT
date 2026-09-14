@@ -1,16 +1,15 @@
-# Guía de Impresión 3D: FocusBot / Goofy (Piezas Separadas y Orientadas)
+# Guía de Impresión 3D: FocusBot (Piezas Separadas y Orientadas)
 
 Todas las piezas han sido **pre-orientadas mecánicamente** con su cara plana sobre la cama ($Z=0.00\text{ mm}$) y centradas en $(0, 0)$. **No requieren rotación manual ni soportes internos**.
 
 ## Parámetros Recomendados de Laminado (Slicer)
 
-- **Altura de Capa (Layer Height)**: 0.16 mm (0.12 mm para Visor y Aros Cyan)
+- **Altura de Capa (Layer Height)**: 0.16 mm (0.12 mm para Aros Cyan y Difusor)
 - **Paredes / Perímetros (Walls)**: 4 paredes (mínimo 1.6 mm para torque de tornillos M2 y ejes)
 - **Relleno (Infill)**: 20% - 25% Gyroid o Grid
 - **Soportes (Supports)**: **DESACTIVADOS (None)** para piezas orientadas sobre cara de partición
 - **Materiales Recomendados**:
-  - Carcasa y Tapa: PLA+ o PETG (Blanco Crema / Color deseado)
-  - Visor: PLA Negro
+  - Carcasas (Cabeza y Torso): PLA+ o PETG (Blanco Crema / Color deseado)
   - Ruedas: TPU 95A (o PLA con aro de goma/silicona)
   - Aros Ruedas: PLA Cyan / Azul eléctrico
   - Difusor Pecho: PETG transparente o Resina translúcida
