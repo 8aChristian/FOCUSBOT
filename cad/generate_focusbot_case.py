@@ -60,11 +60,11 @@ print("1. Engineering Carcasa Cabeza Frontal...", flush=True)
 
 head_box = Part.makeBox(w_h, d_h, h_h, FreeCAD.Vector(-w_h/2, -d_h/2, z_hmin))
 tv_edges = [e for e in head_box.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
-head_solid = head_box.makeFillet(6.0, tv_edges)
+head_solid = head_box.makeFillet(5.0, tv_edges)
 
 z_top, z_bot = z_hmax, z_hmin
-h_edges = [e for e in head_solid.Edges if (abs(e.Vertexes[0].Point.z - z_top) < 0.05 and abs(e.Vertexes[0].Point.z - z_top) < 0.05) or (abs(e.Vertexes[0].Point.z - z_bot) < 0.05 and abs(e.Vertexes[0].Point.z - z_bot) < 0.05)]
-head_solid = head_solid.makeFillet(2.5, h_edges)
+h_edges = [e for e in head_solid.Edges if (abs(e.Vertexes[0].Point.z - z_top) < 0.05) or (abs(e.Vertexes[0].Point.z - z_bot) < 0.05)]
+head_solid = head_solid.makeFillet(2.0, h_edges)
 
 cutter_rear  = Part.makeBox(w_h + 20.0, 60.0, h_h + 30.0, FreeCAD.Vector(-w_h/2 - 10.0, -60.0, z_hmin - 15.0))
 cutter_front = Part.makeBox(w_h + 20.0, 60.0, h_h + 30.0, FreeCAD.Vector(-w_h/2 - 10.0, 0.0, z_hmin - 15.0))
@@ -74,37 +74,42 @@ head_r_raw = head_solid.cut(cutter_front)
 
 head_f = head_f_raw
 
-# Cavidad interna frontal
-cav_f = Part.makeBox(52.0, 16.5, 31.0, FreeCAD.Vector(-26.0, 0.0, 43.0))
+# Cavidad interna frontal con esquinas redondeadas
+cav_f = Part.makeBox(51.0, 16.5, 31.0, FreeCAD.Vector(-25.5, 0.0, 43.0))
+c_edges = [e for e in cav_f.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
+cav_f = cav_f.makeFillet(3.0, c_edges)
 head_f = head_f.cut(cav_f)
 
-# Cuna y Abertura de Pantalla Panoramica (Estilo Anki Vector Edge-to-Edge)
-v_w = 51.0
-v_h = 29.5
-v_z0 = 43.5
-visor_rebate = Part.makeBox(v_w, 2.0, v_h, FreeCAD.Vector(-v_w/2, 17.6, v_z0))
-head_f = head_f.cut(visor_rebate)
+# Cuna y Abertura de Visor con ESQUINAS REDONDEADAS CONTINUAS (R=3.5mm, cero esquinas cuadradas)
+v_rebate_box = Part.makeBox(45.0, 2.0, 27.0, FreeCAD.Vector(-22.5, 18.1, 45.0))
+vr_edges = [e for e in v_rebate_box.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.z - e.Vertexes[1].Point.z) < 0.01]
+v_rebate_solid = v_rebate_box.makeFillet(3.5, vr_edges)
+head_f = head_f.cut(v_rebate_solid)
 
-screen_cut = Part.makeBox(46.0, 6.0, 24.5, FreeCAD.Vector(-23.0, 15.0, 44.5))
-head_f = head_f.cut(screen_cut)
+# Ventana de visualización activa a través del marco frontal (R=2.0mm)
+scr_win_box = Part.makeBox(39.0, 6.0, 18.0, FreeCAD.Vector(-19.5, 15.0, 46.5))
+sw_edges = [e for e in scr_win_box.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.z - e.Vertexes[1].Point.z) < 0.01]
+scr_win_solid = scr_win_box.makeFillet(2.0, sw_edges)
+head_f = head_f.cut(scr_win_solid)
 
-lcd_pocket = Part.makeBox(48.0, 3.0, 26.5, FreeCAD.Vector(-24.0, 14.2, 44.0))
+# Cuna para módulo LCD ST7789 (Z en [45.0, 66.0], Y en [15.2, 17.4])
+lcd_pocket = Part.makeBox(43.0, 2.2, 21.0, FreeCAD.Vector(-21.5, 15.2, 45.0))
 head_f = head_f.cut(lcd_pocket)
 
-# Cuna interna y abertura coaxial para lente de Camara OV2640 estilo Stealth a Z = 71.0mm
-cam_pocket = Part.makeBox(8.5, 3.0, 8.5, FreeCAD.Vector(-4.25, 13.5, 66.75))
-cam_aperture = Part.makeCylinder(2.5, 6.0, FreeCAD.Vector(0.0, 16.0, 71.0), FreeCAD.Vector(0, 1, 0))
+# Cuna y abertura coaxial para Cámara OV2640 (Z en [66.5, 75.0] - ARRIBA de LCD, CERO COLISIÓN)
+cam_pocket = Part.makeBox(8.5, 3.0, 8.5, FreeCAD.Vector(-4.25, 13.5, 66.5))
+cam_aperture = Part.makeCylinder(1.5, 6.0, FreeCAD.Vector(0.0, 16.0, 70.0), FreeCAD.Vector(0, 1, 0))
 head_f = head_f.cut(cam_pocket).cut(cam_aperture)
 
-# Ranuras guía para Headboard PCB (espesor 1.6mm + 0.3mm holgura = 1.9mm en Y = [11.3, 13.2])
-rail_l = Part.makeBox(2.0, 1.9, 30.0, FreeCAD.Vector(-25.2, 11.3, 43.5))
-rail_r = Part.makeBox(2.0, 1.9, 30.0, FreeCAD.Vector(23.2, 11.3, 43.5))
+# Ranuras guía para Headboard PCB (46.0 x 1.6 x 30.0mm en Y = 11.5mm)
+rail_l = Part.makeBox(1.8, 1.9, 30.0, FreeCAD.Vector(-24.5, 11.3, 43.5))
+rail_r = Part.makeBox(1.8, 1.9, 30.0, FreeCAD.Vector(22.7, 11.3, 43.5))
 head_f = head_f.cut(rail_l).cut(rail_r)
 
-# Pilares roscados de cierre M2 en esquinas (X = ±25.8mm, Z = 44.0 & 73.0mm - 100% LIBRES DE PANTALLA)
-h_boss_coords = [(-25.8, 73.0), (25.8, 73.0), (-25.8, 44.0), (25.8, 44.0)]
+# Pilares roscados de cierre M2 desacoplados del frontal (longitud 7.0mm, nunca tocan cara frontal)
+h_boss_coords = [(-24.5, 71.5), (24.5, 71.5), (-24.5, 45.5), (24.5, 45.5)]
 for bx, bz in h_boss_coords:
-    boss = Part.makeCylinder(1.8, 16.5, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
+    boss = Part.makeCylinder(1.8, 7.0, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
     pilot = Part.makeCylinder(0.85, 8.0, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
     head_f = head_f.fuse(boss.cut(pilot))
 
@@ -154,8 +159,14 @@ ear_l = make_cute_ear(-18.0, is_left=True)
 ear_r = make_cute_ear(18.0, is_left=False)
 head_r = head_r.fuse(ear_l).fuse(ear_r)
 
-cav_r = Part.makeBox(52.0, 17.0, 31.0, FreeCAD.Vector(-26.0, -17.0, 43.0))
+cav_r = Part.makeBox(51.0, 17.0, 31.0, FreeCAD.Vector(-25.5, -17.0, 43.0))
+cr_edges = [e for e in cav_r.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
+cav_r = cav_r.makeFillet(3.0, cr_edges)
 head_r = head_r.cut(cav_r)
+
+# Cuna de alojamiento para Parlante 1511 en pared trasera
+spk_pocket = Part.makeBox(15.6, 2.5, 11.6, FreeCAD.Vector(-7.8, -18.5, 52.2))
+head_r = head_r.cut(spk_pocket)
 
 # Rejilla acustica trasera para parlante 1511 a Z = 58.0mm
 spk_cz = 58.0
@@ -171,9 +182,9 @@ for i in range(18):
     holes.append(Part.makeCylinder(0.7, 6.0, FreeCAD.Vector(10.5*math.cos(ang), -21.0, spk_cz + 10.5*math.sin(ang)), FreeCAD.Vector(0, 1, 0)))
 head_r = head_r.cut(Part.makeCompound(holes))
 
-# Clips de retencion para parlante 1511
-clip_l = Part.makeBox(2.0, 4.0, 12.0, FreeCAD.Vector(-8.5, -16.5, 52.0))
-clip_r = Part.makeBox(2.0, 4.0, 12.0, FreeCAD.Vector(6.5, -16.5, 52.0))
+# Clips de retencion para parlante 1511 con holgura lateral
+clip_l = Part.makeBox(1.5, 3.5, 11.0, FreeCAD.Vector(-9.2, -16.0, 52.5))
+clip_r = Part.makeBox(1.5, 3.5, 11.0, FreeCAD.Vector(7.7, -16.0, 52.5))
 head_r = head_r.fuse(clip_l).fuse(clip_r)
 
 # Alojamiento de precision para Servo SG90 (cuerpo, aletas y torre de engranaje)
@@ -201,16 +212,20 @@ head_r = head_r.cut(neck_cup_r).cut(conduit_r)
 
 add_part(head_r, "Carcasa_Cabeza_Trasera", "2_Carcasa_Cabeza_Trasera", COLOR_BODY_CREAM)
 
-# Visor Frontal Panoramico Estilo Anki Vector (Rebate 51.0x29.5mm, Pinhole Camara y Ventana Activa 45.5x24.0mm)
-visor_plate = Part.makeBox(v_w - 0.5, 1.2, v_h - 0.5, FreeCAD.Vector(-(v_w - 0.5)/2, 17.8, v_z0 + 0.25))
-v_edges = [e for e in visor_plate.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.z - e.Vertexes[1].Point.z) < 0.01]
-visor_plate = visor_plate.makeFillet(2.5, v_edges)
+# Visor Frontal con ESQUINAS REDONDEADAS DE ENCASTRE PERFECTO (R=3.35mm, Encastre uniforme en rebate R=3.5mm)
+visor_box = Part.makeBox(44.7, 1.2, 26.7, FreeCAD.Vector(-22.35, 18.25, 45.15))
+v_edges = [e for e in visor_box.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.z - e.Vertexes[1].Point.z) < 0.01]
+visor_plate = visor_box.makeFillet(3.35, v_edges)
 
-cam_pinhole = Part.makeCylinder(1.25, 3.0, FreeCAD.Vector(0.0, 17.0, 71.0), FreeCAD.Vector(0, 1, 0))
-visor_plate = visor_plate.cut(cam_pinhole)
+# Pinhole stealth de cámara en visor (Dia 3.0mm a Z = 70.0mm)
+v_cam_hole = Part.makeCylinder(1.5, 3.0, FreeCAD.Vector(0.0, 18.0, 70.0), FreeCAD.Vector(0, 1, 0))
+visor_plate = visor_plate.cut(v_cam_hole)
 
-disp_window = Part.makeBox(45.5, 3.0, 24.0, FreeCAD.Vector(-22.75, 17.0, 44.75))
-visor_plate = visor_plate.cut(disp_window)
+# Ventana de visualización de display en visor con esquinas redondeadas
+v_disp_box = Part.makeBox(38.5, 3.0, 17.5, FreeCAD.Vector(-19.25, 18.0, 46.75))
+vd_edges = [e for e in v_disp_box.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.z - e.Vertexes[1].Point.z) < 0.01]
+v_disp_solid = v_disp_box.makeFillet(1.8, vd_edges)
+visor_plate = visor_plate.cut(v_disp_solid)
 add_part(visor_plate, "Visor_Frontal_2Pulgadas", "3_Visor_Frontal_2Pulgadas", COLOR_VISOR_BLACK)
 
 # ==============================================================================
@@ -452,15 +467,19 @@ s_spline = Part.makeCylinder(2.4, 3.5, FreeCAD.Vector(0.0, 0.0, 37.0), FreeCAD.V
 servo = s_body.fuse(s_flange).fuse(s_tower).fuse(s_spline)
 add_part(servo, "Interno_Servo_SG90", "Servo_SG90_Pan", COLOR_SERVO_BLUE)
 
-# Pantalla LCD 2.0 Pulgadas enrasada en su cuna frontal
-lcd = Part.makeBox(47.0, 2.0, 25.5, FreeCAD.Vector(-23.5, 14.5, 44.25))
-add_part(lcd, "Interno_Display_LCD20", "Display_LCD_2Pulgadas", COLOR_VISOR_BLACK)
+# Pantalla LCD ST7789 enrasada en su cuna frontal (Z in [45.25, 65.75])
+lcd = Part.makeBox(41.5, 1.8, 20.5, FreeCAD.Vector(-20.75, 15.3, 45.25))
+add_part(lcd, "Interno_Display_LCD20", "Display_LCD_ST7789", COLOR_VISOR_BLACK)
 
-# Camara OV2640 con Lente Coaxial Stealth a Z = 71.0mm
-cam_body = Part.makeBox(8.0, 2.8, 8.0, FreeCAD.Vector(-4.0, 13.6, 67.0))
-cam_lens = Part.makeCylinder(2.4, 4.0, FreeCAD.Vector(0.0, 16.0, 71.0), FreeCAD.Vector(0, 1, 0))
+# Camara OV2640 con Lente Coaxial Stealth a Z = 70.0mm (Z in [66.75, 74.75] - ARRIBA de LCD)
+cam_body = Part.makeBox(8.0, 2.5, 8.0, FreeCAD.Vector(-4.0, 13.8, 66.75))
+cam_lens = Part.makeCylinder(1.4, 3.5, FreeCAD.Vector(0.0, 15.5, 70.0), FreeCAD.Vector(0, 1, 0))
 cam = cam_body.fuse(cam_lens)
 add_part(cam, "Interno_Camara_OV2640", "Camara_OV2640", COLOR_VISOR_BLACK)
+
+# Parlante 1511 montado en cuna trasera (15x11x3.5mm)
+speaker = Part.makeBox(15.0, 3.5, 11.0, FreeCAD.Vector(-7.5, -18.3, 52.5))
+add_part(speaker, "Interno_Parlante_1511", "Parlante_1511", COLOR_STEEL_METAL)
 
 # ==============================================================================
 # 7. GUARDAR DOCUMENTO NATIVO Y EXPORTAR STL
