@@ -75,30 +75,37 @@ head_r_raw = head_solid.cut(cutter_front)
 head_f = head_f_raw
 
 # Cavidad interna frontal
-cav_f = Part.makeBox(50.0, 16.5, 30.0, FreeCAD.Vector(-25.0, 0.0, 43.5))
+cav_f = Part.makeBox(52.0, 16.5, 31.0, FreeCAD.Vector(-26.0, 0.0, 43.0))
 head_f = head_f.cut(cav_f)
 
-# Cuna y Abertura de Pantalla LCD 2.0" (Ventana 100% limpia sin cruce de pilares)
-lcd_pocket = Part.makeBox(42.5, 3.0, 21.5, FreeCAD.Vector(-21.25, 14.5, 44.0))
-screen_cut = Part.makeBox(39.0, 6.0, 18.0, FreeCAD.Vector(-19.5, 16.0, 45.75))
-bezel_rebate = Part.makeBox(43.5, 1.4, 22.5, FreeCAD.Vector(-21.75, 18.1, 43.5))
-head_f = head_f.cut(lcd_pocket).cut(screen_cut).cut(bezel_rebate)
+# Cuna y Abertura de Pantalla Panoramica (Estilo Anki Vector Edge-to-Edge)
+v_w = 51.0
+v_h = 29.5
+v_z0 = 43.5
+visor_rebate = Part.makeBox(v_w, 2.0, v_h, FreeCAD.Vector(-v_w/2, 17.6, v_z0))
+head_f = head_f.cut(visor_rebate)
 
-# Cuna interna y abertura coaxial para lente de Camara OV2640 a Z = 70.5mm
-cam_pocket = Part.makeBox(9.0, 3.5, 9.0, FreeCAD.Vector(-4.5, 13.0, 66.0))
-cam_aperture = Part.makeCylinder(3.3, 6.0, FreeCAD.Vector(0.0, 15.0, 70.5), FreeCAD.Vector(0, 1, 0))
+screen_cut = Part.makeBox(46.0, 6.0, 24.5, FreeCAD.Vector(-23.0, 15.0, 44.5))
+head_f = head_f.cut(screen_cut)
+
+lcd_pocket = Part.makeBox(48.0, 3.0, 26.5, FreeCAD.Vector(-24.0, 14.2, 44.0))
+head_f = head_f.cut(lcd_pocket)
+
+# Cuna interna y abertura coaxial para lente de Camara OV2640 estilo Stealth a Z = 71.0mm
+cam_pocket = Part.makeBox(8.5, 3.0, 8.5, FreeCAD.Vector(-4.25, 13.5, 66.75))
+cam_aperture = Part.makeCylinder(2.5, 6.0, FreeCAD.Vector(0.0, 16.0, 71.0), FreeCAD.Vector(0, 1, 0))
 head_f = head_f.cut(cam_pocket).cut(cam_aperture)
 
 # Ranuras guía para Headboard PCB (espesor 1.6mm + 0.3mm holgura = 1.9mm en Y = [11.3, 13.2])
-rail_l = Part.makeBox(2.2, 1.9, 30.5, FreeCAD.Vector(-24.2, 11.3, 43.5))
-rail_r = Part.makeBox(2.2, 1.9, 30.5, FreeCAD.Vector(22.0, 11.3, 43.5))
+rail_l = Part.makeBox(2.0, 1.9, 30.0, FreeCAD.Vector(-25.2, 11.3, 43.5))
+rail_r = Part.makeBox(2.0, 1.9, 30.0, FreeCAD.Vector(23.2, 11.3, 43.5))
 head_f = head_f.cut(rail_l).cut(rail_r)
 
-# Pilares roscados de cierre M2 en esquinas (X = ±25.2mm, Z = 45.0 & 71.5mm - 100% LIBRES DE PANTALLA)
-h_boss_coords = [(-25.2, 71.5), (25.2, 71.5), (-25.2, 45.0), (25.2, 45.0)]
+# Pilares roscados de cierre M2 en esquinas (X = ±25.8mm, Z = 44.0 & 73.0mm - 100% LIBRES DE PANTALLA)
+h_boss_coords = [(-25.8, 73.0), (25.8, 73.0), (-25.8, 44.0), (25.8, 44.0)]
 for bx, bz in h_boss_coords:
-    boss = Part.makeCylinder(2.0, 16.5, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
-    pilot = Part.makeCylinder(0.9, 8.0, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
+    boss = Part.makeCylinder(1.8, 16.5, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
+    pilot = Part.makeCylinder(0.85, 8.0, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
     head_f = head_f.fuse(boss.cut(pilot))
 
 # Copa hembra de tornamesa en cuello inferior (Dia 18.6mm, Altura 3.5mm, Z in [37.5, 41.0])
@@ -147,7 +154,7 @@ ear_l = make_cute_ear(-18.0, is_left=True)
 ear_r = make_cute_ear(18.0, is_left=False)
 head_r = head_r.fuse(ear_l).fuse(ear_r)
 
-cav_r = Part.makeBox(50.0, 17.0, 30.0, FreeCAD.Vector(-25.0, -17.0, 43.5))
+cav_r = Part.makeBox(52.0, 17.0, 31.0, FreeCAD.Vector(-26.0, -17.0, 43.0))
 head_r = head_r.cut(cav_r)
 
 # Rejilla acustica trasera para parlante 1511 a Z = 58.0mm
@@ -182,7 +189,7 @@ for sx in [-14.0, 14.0]:
 
 # Pilares perimetrales de union de cabeza CON ORIFICIOS Y AVELLANADOS 100% VISIBLES DESDE EL EXTERIOR
 for bx, bz in h_boss_coords:
-    r_pillar = Part.makeCylinder(2.0, 16.5, FreeCAD.Vector(bx, -16.5, bz), FreeCAD.Vector(0, 1, 0))
+    r_pillar = Part.makeCylinder(1.8, 16.5, FreeCAD.Vector(bx, -16.5, bz), FreeCAD.Vector(0, 1, 0))
     thru = Part.makeCylinder(1.15, 25.0, FreeCAD.Vector(bx, -21.0, bz), FreeCAD.Vector(0, 1, 0))
     cb   = Part.makeCylinder(2.2, 3.0, FreeCAD.Vector(bx, -20.5, bz), FreeCAD.Vector(0, 1, 0))
     head_r = head_r.fuse(r_pillar).cut(thru).cut(cb)
@@ -194,11 +201,15 @@ head_r = head_r.cut(neck_cup_r).cut(conduit_r)
 
 add_part(head_r, "Carcasa_Cabeza_Trasera", "2_Carcasa_Cabeza_Trasera", COLOR_BODY_CREAM)
 
-# Visor Frontal (Encastre perfecto y enrasado en rebate)
-visor_plate = Part.makeBox(43.0, 1.2, 22.0, FreeCAD.Vector(-21.5, 18.2, 43.75))
+# Visor Frontal Panoramico Estilo Anki Vector (Rebate 51.0x29.5mm, Pinhole Camara y Ventana Activa 45.5x24.0mm)
+visor_plate = Part.makeBox(v_w - 0.5, 1.2, v_h - 0.5, FreeCAD.Vector(-(v_w - 0.5)/2, 17.8, v_z0 + 0.25))
 v_edges = [e for e in visor_plate.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.z - e.Vertexes[1].Point.z) < 0.01]
-visor_plate = visor_plate.makeFillet(1.5, v_edges)
-disp_window = Part.makeBox(38.5, 2.0, 17.5, FreeCAD.Vector(-19.25, 17.5, 46.0))
+visor_plate = visor_plate.makeFillet(2.5, v_edges)
+
+cam_pinhole = Part.makeCylinder(1.25, 3.0, FreeCAD.Vector(0.0, 17.0, 71.0), FreeCAD.Vector(0, 1, 0))
+visor_plate = visor_plate.cut(cam_pinhole)
+
+disp_window = Part.makeBox(45.5, 3.0, 24.0, FreeCAD.Vector(-22.75, 17.0, 44.75))
 visor_plate = visor_plate.cut(disp_window)
 add_part(visor_plate, "Visor_Frontal_2Pulgadas", "3_Visor_Frontal_2Pulgadas", COLOR_VISOR_BLACK)
 
@@ -442,12 +453,12 @@ servo = s_body.fuse(s_flange).fuse(s_tower).fuse(s_spline)
 add_part(servo, "Interno_Servo_SG90", "Servo_SG90_Pan", COLOR_SERVO_BLUE)
 
 # Pantalla LCD 2.0 Pulgadas enrasada en su cuna frontal
-lcd = Part.makeBox(41.5, 2.0, 20.5, FreeCAD.Vector(-20.75, 15.5, 44.5))
+lcd = Part.makeBox(47.0, 2.0, 25.5, FreeCAD.Vector(-23.5, 14.5, 44.25))
 add_part(lcd, "Interno_Display_LCD20", "Display_LCD_2Pulgadas", COLOR_VISOR_BLACK)
 
-# Camara OV2640 con Lente Coaxial
-cam_body = Part.makeBox(8.0, 3.0, 8.0, FreeCAD.Vector(-4.0, 13.5, 66.5))
-cam_lens = Part.makeCylinder(3.2, 4.0, FreeCAD.Vector(0.0, 16.5, 70.5), FreeCAD.Vector(0, 1, 0))
+# Camara OV2640 con Lente Coaxial Stealth a Z = 71.0mm
+cam_body = Part.makeBox(8.0, 2.8, 8.0, FreeCAD.Vector(-4.0, 13.6, 67.0))
+cam_lens = Part.makeCylinder(2.4, 4.0, FreeCAD.Vector(0.0, 16.0, 71.0), FreeCAD.Vector(0, 1, 0))
 cam = cam_body.fuse(cam_lens)
 add_part(cam, "Interno_Camara_OV2640", "Camara_OV2640", COLOR_VISOR_BLACK)
 

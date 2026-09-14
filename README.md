@@ -32,10 +32,12 @@ FocusBot features a custom **Top-Down DFA (Design for Assembly)** monocoque arch
 </p>
 
 ### Key Enclosure Features:
+- **Anki Vector-Inspired Panoramic Face (&gt;77% Screen Ratio)**: Reverse-engineered internal packaging maximizing face screen area (>77% frontal head coverage). Features a $51.0 \times 29.5\text{ mm}$ flush tinted visor rebate, active $45.5 \times 24.0\text{ mm}$ display viewing window, and an edge-to-edge optical blending aesthetic where the screen merges seamlessly into the black bezel.
+- **Stealth Coaxial Camera Aperture**: Integrated $\varnothing 2.5\text{ mm}$ pinhole aperture at $Z = 71.0\text{ mm}$ hidden within the upper visor border, eliminating bulky external camera lenses and mimicking the clean industrial design of Anki Vector.
+- **Zero Frontal Fasteners (Rear-Accessible DFA)**: 100% clean front face with zero visible screws, seams, or parting lines. Structural clamping is handled by 4 rear-accessible M2 counterbored screws ($\varnothing 2.2\text{ mm}$ heads) driving into perimeter corner bosses ($X = \pm 25.8\text{ mm}$, $Z = 44.0\text{ & }73.0\text{ mm}$) that clear all internal electronics.
 - **Top-Down Serviceability**: The torso is split horizontally at $Z = 24.5\text{ mm}$ into a lower chassis tub (`Carcasa_Torso_Chasis`) and an upper hood (`Carcasa_Torso_Tapa`). Technicians can populate motors, battery, casters, and wire the Mainboard PCB with complete top-down clearance before sealing the assembly with 4 vertical corner M2 fasteners.
-- **Biomorphic Head Unit**: Integrates a flush-mounted 2.0" IPS display, coaxial OV2640 camera aperture, acoustic tuned speaker grille, integrated expressive ears, and 4 rear counterbored M2 screw sockets accessible from the exterior.
 - **Kinematic Ground Plane ($Z = 0.00\text{ mm}$)**: 4-point coplanar ground contact consisting of two $\varnothing 34.0\text{ mm}$ smooth cylindrical traction wheels ($R = 17.00\text{ mm}$) and two precision $\varnothing 8.0\text{ mm}$ omnidirectional stainless steel ball casters, guaranteeing zero-wobble differential steering.
-- **Zero Collision Guarantee**: 100% verified via boolean intersection algorithms across all components ($0.0000\text{ mm}^3$ mutual collision).
+- **Zero Collision Guarantee**: 100% verified via boolean intersection algorithms across all solid parts ($0.0000\text{ mm}^3$ mutual collision).
 
 ---
 

@@ -2,10 +2,14 @@ import FreeCAD
 import TechDraw
 import Part
 import os
+import re
 
 print(">>> [DASHBOARD RENDERER v12] Exporting FocusBot Case 2D Technical Views...", flush=True)
 
-fcstd_file = r"c:\Users\Christian Ochoa\Documents\antigravity\focusbot-borg\cad\focusbot_case.FCStd"
+base_dir = os.path.dirname(os.path.abspath(__file__))
+repo_dir = os.path.dirname(base_dir)
+
+fcstd_file = os.path.join(base_dir, "focusbot_case.FCStd")
 doc = FreeCAD.open(fcstd_file)
 
 exterior_names = [
@@ -28,10 +32,17 @@ dir_side  = FreeCAD.Vector(-1, 0, 0)
 dir_rear  = FreeCAD.Vector(0, -1, 0)
 dir_iso   = FreeCAD.Vector(1, 1.2, 1)
 
-svg_front = TechDraw.projectToSVG(compound, dir_front)
-svg_side  = TechDraw.projectToSVG(compound, dir_side)
-svg_rear  = TechDraw.projectToSVG(compound, dir_rear)
-svg_iso   = TechDraw.projectToSVG(compound, dir_iso)
+def get_clean_svg(dir_vec, stroke_color="#f8fafc", stroke_w="0.85"):
+    raw = TechDraw.projectToSVG(compound, dir_vec)
+    raw = re.sub(r'<\?xml[^>]*\?>', '', raw)
+    raw = re.sub(r'stroke="[^"]*"', f'stroke="{stroke_color}" stroke-width="{stroke_w}"', raw)
+    raw = re.sub(r"stroke='[^']*'", f"stroke='{stroke_color}' stroke-width='{stroke_w}'", raw)
+    return raw
+
+svg_iso   = get_clean_svg(dir_iso,   stroke_color="#38bdf8", stroke_w="0.75")
+svg_front = get_clean_svg(dir_front, stroke_color="#34d399", stroke_w="0.85")
+svg_side  = get_clean_svg(dir_side,  stroke_color="#f472b6", stroke_w="0.85")
+svg_rear  = get_clean_svg(dir_rear,  stroke_color="#fbbf24", stroke_w="0.85")
 
 dashboard_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 920" width="1200" height="920" style="background:#070b14; font-family: 'Segoe UI', Inter, -apple-system, sans-serif;">
   <defs>
@@ -50,36 +61,36 @@ dashboard_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 92
   <rect x="20" y="20" width="1160" height="72" rx="14" fill="#0f172a" stroke="#1e293b" stroke-width="1.5"/>
   <circle cx="54" cy="56" r="16" fill="#0284c7"/>
   <path d="M 47 56 L 52 61 L 61 50" stroke="#ffffff" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="82" y="48" fill="#f8fafc" font-size="20" font-weight="700">FOCUSBOT CASE v12.0: DFA Top-Down Assembly, Smooth Wheels &amp; Visible Fasteners</text>
-  <text x="82" y="71" fill="#94a3b8" font-size="13">Bañera Monocasco + Tapa Superior • Ruedas Lisas Ø34mm • 4x M2 Cabeza Traseros Visibles • Altura 8.0 cm</text>
+  <text x="82" y="48" fill="#f8fafc" font-size="20" font-weight="700">FOCUSBOT MECHATRONIC ENCLOSURE v12.0: Anki Vector Visor &amp; Top-Down DFA</text>
+  <text x="82" y="71" fill="#94a3b8" font-size="13">Pantalla Panorámica &gt;77% • Cámara Stealth Ø2.5mm • Ruedas Lisas Ø34mm • 4x M2 Traseros Visibles • Altura 8.0 cm</text>
   
   <rect x="920" y="34" width="240" height="44" rx="10" fill="url(#badgeGrad)"/>
-  <text x="935" y="61" fill="#0f172a" font-size="13" font-weight="900">DFA TOP-DOWN • Z=24.5mm</text>
+  <text x="932" y="61" fill="#0f172a" font-size="13" font-weight="900">ANKI RE-ENG • 0 COLLISION</text>
 
   <!-- Panel 1: Isometric 3D Assembly -->
   <rect x="20" y="108" width="560" height="380" rx="14" fill="#0f172a" stroke="#1e293b" stroke-width="1.2"/>
   <rect x="35" y="123" width="8" height="20" rx="4" fill="#38bdf8"/>
-  <text x="52" y="139" fill="#f8fafc" font-size="16" font-weight="700">Vista Isométrica 3D (Ruedas Lisas &amp; Ensamble Top-Down)</text>
-  <g transform="translate(300, 315) scale(3.1, -3.1)" stroke="#38bdf8" stroke-width="0.35" fill="none">
+  <text x="52" y="139" fill="#f8fafc" font-size="16" font-weight="700">Vista Isométrica 3D (Silueta Biormórfica &amp; Visor Panorámico)</text>
+  <g transform="translate(300, 315) scale(3.1, -3.1)" fill="none">
     {svg_iso}
   </g>
   <rect x="35" y="438" width="530" height="36" rx="8" fill="#070b14"/>
-  <text x="50" y="461" fill="#94a3b8" font-size="12">• Neumáticos lisos sin tacos • Guardabarros envolventes • Tapa superior desmontable</text>
+  <text x="50" y="461" fill="#94a3b8" font-size="12">• Visor Anki Vector 51x29.5mm • Neumáticos lisos Ø34mm • Guardabarros ergonómicos</text>
 
   <!-- Panel 2: Front View (Face & Chest) -->
   <rect x="600" y="108" width="580" height="380" rx="14" fill="#0f172a" stroke="#1e293b" stroke-width="1.2"/>
   <rect x="615" y="123" width="8" height="20" rx="4" fill="#34d399"/>
-  <text x="632" y="139" fill="#f8fafc" font-size="16" font-weight="700">Vista Frontal (Frente 100% Limpio, Cero Tornillos o Ranuras)</text>
-  <g transform="translate(890, 320) scale(3.3, -3.3)" stroke="#34d399" stroke-width="0.35" fill="none">
+  <text x="632" y="139" fill="#f8fafc" font-size="16" font-weight="700">Vista Frontal (&gt;77% Área Frontal Pantalla, Cero Tornillos)</text>
+  <g transform="translate(890, 320) scale(3.3, -3.3)" fill="none">
     {svg_front}
   </g>
   <rect x="615" y="438" width="550" height="36" rx="8" fill="#070b14"/>
-  <text x="630" y="461" fill="#94a3b8" font-size="12">• Visor enrasado LCD 2.0" • Ventana despejada sin pilares • Difusor cyan y cámara coaxial</text>
+  <text x="630" y="461" fill="#94a3b8" font-size="12">• Ventana activa 45.5x24.0mm • Pinhole cámara Ø2.5mm a Z=71mm • Rebate enrasado</text>
 
   <!-- Panel 3: Side Profile View (Height & Kinematic Alignment) -->
   <rect x="20" y="508" width="560" height="390" rx="14" fill="#0f172a" stroke="#1e293b" stroke-width="1.2"/>
   <rect x="35" y="523" width="8" height="20" rx="4" fill="#f472b6"/>
-  <text x="52" y="539" fill="#f8fafc" font-size="16" font-weight="700">Vista Lateral (Partición Horizontal Torso Z=24.5mm)</text>
+  <text x="52" y="539" fill="#f8fafc" font-size="16" font-weight="700">Vista Lateral (Bipartición Torso Z=24.5mm)</text>
   
   <!-- Dimension line for 8.0 cm -->
   <line x1="485" y1="565" x2="485" y2="830" stroke="#f472b6" stroke-width="1.5" stroke-dasharray="4,2"/>
@@ -92,29 +103,39 @@ dashboard_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 92
   <line x1="120" y1="715" x2="440" y2="715" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,3"/>
   <text x="350" y="705" fill="#ef4444" font-size="11" font-weight="bold">Tapa Z=24.5</text>
 
-  <g transform="translate(275, 715) scale(3.1, -3.1)" stroke="#f472b6" stroke-width="0.35" fill="none">
+  <g transform="translate(275, 715) scale(3.1, -3.1)" fill="none">
     {svg_side}
   </g>
   <rect x="35" y="848" width="530" height="36" rx="8" fill="#070b14"/>
-  <text x="50" y="871" fill="#94a3b8" font-size="12">• Bipartición horizontal Z=24.5mm (línea roja) • Ensamble top-down • Suelo Z=0.00mm</text>
+  <text x="50" y="871" fill="#94a3b8" font-size="12">• DFA Top-Down • Plano cinemático Z=0.00mm • Centro de masas bajo centrado en batería</text>
 
   <!-- Panel 4: Rear View (Fasteners & Ports) -->
   <rect x="600" y="508" width="580" height="390" rx="14" fill="#0f172a" stroke="#1e293b" stroke-width="1.2"/>
   <rect x="615" y="523" width="8" height="20" rx="4" fill="#fbbf24"/>
-  <text x="632" y="539" fill="#f8fafc" font-size="16" font-weight="700">Vista Trasera (Tornillos M2 Visibles, USB-C &amp; Altavoz)</text>
-  <g transform="translate(890, 720) scale(3.3, -3.3)" stroke="#fbbf24" stroke-width="0.35" fill="none">
+  <text x="632" y="539" fill="#f8fafc" font-size="16" font-weight="700">Vista Trasera (4x M2 Avellanados, Rejilla Acústica &amp; Puertos)</text>
+  <g transform="translate(890, 720) scale(3.3, -3.3)" fill="none">
     {svg_rear}
   </g>
   <rect x="615" y="848" width="550" height="36" rx="8" fill="#070b14"/>
-  <text x="630" y="871" fill="#94a3b8" font-size="12">• 4x M2 avellanados cabeza trasera 100% visibles • 4x M2 tapa torso • USB-C y switch SW1</text>
+  <text x="630" y="871" fill="#94a3b8" font-size="12">• 4x M2 exteriores avellanados Ø2.2mm • 37 taladros acústicos parlante • USB-C y switch SW1</text>
 </svg>'''
 
-out_svg = r"c:\Users\Christian Ochoa\Documents\antigravity\focusbot-borg\cad\focusbot_case_dashboard.svg"
-with open(out_svg, "w", encoding="utf-8") as f:
+# 1. Output to cad/focusbot_case_dashboard.svg
+out_cad_svg = os.path.join(base_dir, "focusbot_case_dashboard.svg")
+with open(out_cad_svg, "w", encoding="utf-8") as f:
     f.write(dashboard_svg)
-print(f"[OK] Exported updated 2D Dashboard SVG: {out_svg}", flush=True)
+print(f"[OK] Exported CAD Dashboard SVG: {out_cad_svg}", flush=True)
 
-artifact_svg = r"C:\Users\Christian Ochoa\.gemini\antigravity\brain\f97d3ae3-cffb-48bb-b959-294df62a532c\focusbot_case_dashboard.svg"
-with open(artifact_svg, "w", encoding="utf-8") as f:
+# 2. Output to docs/images/case_architecture.svg
+out_docs_svg = os.path.join(repo_dir, "docs", "images", "case_architecture.svg")
+with open(out_docs_svg, "w", encoding="utf-8") as f:
     f.write(dashboard_svg)
-print(f"[OK] Copied Dashboard SVG to Artifacts: {artifact_svg}", flush=True)
+print(f"[OK] Exported Docs Architecture SVG: {out_docs_svg}", flush=True)
+
+# 3. Output to artifact directory
+artifact_dir = r"C:\Users\Christian Ochoa\.gemini\antigravity\brain\f97d3ae3-cffb-48bb-b959-294df62a532c"
+if os.path.exists(artifact_dir):
+    artifact_svg = os.path.join(artifact_dir, "focusbot_case_dashboard.svg")
+    with open(artifact_svg, "w", encoding="utf-8") as f:
+        f.write(dashboard_svg)
+    print(f"[OK] Copied Dashboard SVG to Artifacts: {artifact_svg}", flush=True)
