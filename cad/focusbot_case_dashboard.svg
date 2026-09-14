@@ -27,10 +27,10 @@
   <text x="52" y="139" fill="#f8fafc" font-size="16" font-weight="700">Vista Isométrica 3D (Silueta Biormórfica &amp; Visor Panorámico)</text>
   <g transform="translate(300, 315) scale(3.1, -3.1)" fill="none">
     <g   fill="none"
-   stroke="#38bdf8" stroke-width="0.75"
+   stroke="#38bdf8"
    stroke-linecap="butt"
    stroke-linejoin="miter"
-   stroke-width="1.0"
+   stroke-width="0.75"
    transform="scale(1, -1)"
   >
 <path id= "1" d=" M 57.9348 -49.5397 L 48.14 -55.8769 " />
@@ -62,10 +62,10 @@
 <path id= "50" d=" M 0.859762 25.9674 L 0.859762 27.1465 " />
 </g>
 <g   fill="none"
-   stroke="#38bdf8" stroke-width="0.75"
+   stroke="#38bdf8"
    stroke-linecap="butt"
    stroke-linejoin="miter"
-   stroke-width="1.0"
+   stroke-width="0.75"
    transform="scale(1, -1)"
   >
 <path id= "1" d=" M 31.4971 -17.9416 L 33.0335 -18.632 " />
@@ -227,20 +227,20 @@
   <text x="632" y="139" fill="#f8fafc" font-size="16" font-weight="700">Vista Frontal (&gt;77% Área Frontal Pantalla, Cero Tornillos)</text>
   <g transform="translate(890, 320) scale(3.3, -3.3)" fill="none">
     <g   fill="none"
-   stroke="#34d399" stroke-width="0.85"
+   stroke="#34d399"
    stroke-linecap="butt"
    stroke-linejoin="miter"
-   stroke-width="1.0"
+   stroke-width="0.85"
    transform="scale(1, -1)"
   >
 <path d="M79.8779, -18.3815 Q79.961, -18.6433 80.0607, -18.9136 " /><path d="M80.3847, -19.6948 Q80.1755, -19.1927 79.9832, -18.7242 " /><path d="M77.5667, -13.8492 L77.5576, -13.8433 " /><path d="M80.0228, -18.7679 L80.0425, -18.8638 " /><path d="M79.5391, -22.3923 C79.5553, -22.3299 79.5762, -22.2639 79.6019, -22.1941  C79.6434, -22.0845 79.6959, -21.9708 79.7732, -21.8761 " /><path d="M77.5397, 13.7906 Q77.5342, 13.7893 77.5298, 13.7841 " /><path d="M79.6227, 22.0514 Q79.5965, 22.1183 79.5791, 22.1927 " /><path d="M79.6021, 22.0866 Q79.6504, 21.9945 79.7305, 21.9207 " /><path d="M80.3854, 19.6966 C80.1415, 19.0861 79.9139, 18.5085 79.7336, 17.9822 " /><path d="M0 0 A4 4 0 0 1 3.5 -3.96863" /><path id= "11" d=" M 0 -39.5 L 0 -32.5 " />
 <path id= "12" d=" M 0 32.5 L 0 39.5 " />
 </g>
 <g   fill="none"
-   stroke="#34d399" stroke-width="0.85"
+   stroke="#34d399"
    stroke-linecap="butt"
    stroke-linejoin="miter"
-   stroke-width="1.0"
+   stroke-width="0.85"
    transform="scale(1, -1)"
   >
 <path id= "1" d=" M 43 -28.5 L 74 -28.5 " />
@@ -313,20 +313,20 @@
 
   <g transform="translate(275, 715) scale(3.1, -3.1)" fill="none">
     <g   fill="none"
-   stroke="#f472b6" stroke-width="0.85"
+   stroke="#f472b6"
    stroke-linecap="butt"
    stroke-linejoin="miter"
-   stroke-width="1.0"
+   stroke-width="0.85"
    transform="scale(1, -1)"
   >
 <path id= "1" d=" M -43.5 19.4024 L -43.5 19.4024 " />
 <path id= "2" d=" M -69.5 19.4024 L -69.5 19.4024 " />
 <path d="M-77.0161, 2.26332 L-77.0142, 2.2616 " /><path d="M-77.0142, 2.2616 L-77.0147, 2.26232 " /><path d="M-80.1282, 7.75052 C-80.0554, 7.92251 -79.9773, 8.07655 -79.9077, 8.19234  C-79.7853, 8.39455 -79.6992, 8.48784 -79.6444, 8.55499 " /><path d="M-80.2284, 5.75397 Q-80.2667, 5.82123 -80.3059, 5.8708 " /><path d="M-80.3056, 5.87038 L-80.3056, 5.87038 " /><path d="M0 -29 A4 4 0 0 1 -3.5 -25.0314" /><path d="M-3.5 -32.9686 A4 4 0 0 1 0 -29" /><path d="M0 29 A4 4 0 0 1 -3.5 32.9686" /><path d="M-3.5 25.0314 A4 4 0 0 1 0 29" /></g>
 <g   fill="none"
-   stroke="#f472b6" stroke-width="0.85"
+   stroke="#f472b6"
    stroke-linecap="butt"
    stroke-linejoin="miter"
-   stroke-width="1.0"
+   stroke-width="0.85"
    transform="scale(1, -1)"
   >
 <path id= "1" d=" M -43 0 L -74 0 " />
@@ -364,20 +364,20 @@
   <text x="632" y="539" fill="#f8fafc" font-size="16" font-weight="700">Vista Trasera (4x M2 Avellanados, Rejilla Acústica &amp; Puertos)</text>
   <g transform="translate(890, 720) scale(3.3, -3.3)" fill="none">
     <g   fill="none"
-   stroke="#fbbf24" stroke-width="0.85"
+   stroke="#fbbf24"
    stroke-linecap="butt"
    stroke-linejoin="miter"
-   stroke-width="1.0"
+   stroke-width="0.85"
    transform="scale(1, -1)"
   >
 <path d="M-80.0425, -18.8638 L-80.1138, -19.0541 " /><path d="M-80.3847, -19.6948 Q-80.2182, -19.294 -80.0607, -18.9136 " /><path d="M-77.5667, -13.8492 L-77.5576, -13.8433 " /><path d="M-80.0228, -18.7679 Q-80.0727, -19.0199 -80.128, -19.2205 " /><path d="M-79.5391, -22.3923 C-79.5553, -22.3299 -79.5762, -22.2639 -79.6019, -22.1941  C-79.6434, -22.0845 -79.6959, -21.9708 -79.7732, -21.8761 " /><path d="M-77.5397, 13.7906 Q-77.5342, 13.7893 -77.5298, 13.7841 " /><path d="M-80.0122, 18.7649 Q-80.0631, 19.0104 -80.1193, 19.2073 " /><path d="M-79.6363, 22.0208 Q-79.6007, 22.0987 -79.5791, 22.1927 " /><path d="M-79.6227, 22.0514 Q-79.6659, 21.9791 -79.7305, 21.9207 " /><path d="M-80.3854, 19.6966 Q-80.1836, 19.1936 -80.0038, 18.7246 " /><path d="M-3.5 -3.96863 A4 4 0 0 1 0 -4.89859e-16" /><path id= "12" d=" M 0 -39.5 L 0 -32.5 " />
 <path id= "13" d=" M 0 32.5 L 0 39.5 " />
 </g>
 <g   fill="none"
-   stroke="#fbbf24" stroke-width="0.85"
+   stroke="#fbbf24"
    stroke-linecap="butt"
    stroke-linejoin="miter"
-   stroke-width="1.0"
+   stroke-width="0.85"
    transform="scale(1, -1)"
   >
 <path id= "1" d=" M -76 -24.5 L -76 -26.5 " />

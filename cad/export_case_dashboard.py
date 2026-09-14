@@ -35,8 +35,10 @@ dir_iso   = FreeCAD.Vector(1, 1.2, 1)
 def get_clean_svg(dir_vec, stroke_color="#f8fafc", stroke_w="0.85"):
     raw = TechDraw.projectToSVG(compound, dir_vec)
     raw = re.sub(r'<\?xml[^>]*\?>', '', raw)
-    raw = re.sub(r'stroke="[^"]*"', f'stroke="{stroke_color}" stroke-width="{stroke_w}"', raw)
-    raw = re.sub(r"stroke='[^']*'", f"stroke='{stroke_color}' stroke-width='{stroke_w}'", raw)
+    raw = re.sub(r'\bstroke="[^"]*"', f'stroke="{stroke_color}"', raw)
+    raw = re.sub(r"\bstroke='[^']*'", f"stroke='{stroke_color}'", raw)
+    raw = re.sub(r'\bstroke-width="[^"]*"', f'stroke-width="{stroke_w}"', raw)
+    raw = re.sub(r"\bstroke-width='[^']*'", f"stroke-width='{stroke_w}'", raw)
     return raw
 
 svg_iso   = get_clean_svg(dir_iso,   stroke_color="#38bdf8", stroke_w="0.75")
