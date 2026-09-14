@@ -80,26 +80,24 @@ c_edges = [e for e in cav_f.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].P
 cav_f = cav_f.makeFillet(2.5, c_edges)
 head_f = head_f.cut(cav_f)
 
-# Cuna y Abertura de Visor Panoramico 77% con ESQUINAS REDONDEADAS CONTINUAS (51.0 x 29.5mm, R=3.5mm)
-v_rebate_box = Part.makeBox(51.0, 2.0, 29.5, FreeCAD.Vector(-25.5, 18.1, 43.5))
-vr_edges = [e for e in v_rebate_box.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.z - e.Vertexes[1].Point.z) < 0.01]
-v_rebate_solid = v_rebate_box.makeFillet(3.5, vr_edges)
-head_f = head_f.cut(v_rebate_solid)
-
-# Ventana de visualizacion activa a traves del marco frontal (44.0 x 23.5mm, R=2.0mm)
-scr_win_box = Part.makeBox(44.0, 6.0, 23.5, FreeCAD.Vector(-22.0, 15.0, 44.5))
+# Ventana activa frontal para Pantalla 2.0" ST7789V integrada directamente en la carcasa (43.5 x 23.0mm, R=2.0mm)
+# Estructura monocoque 100% unificada: Cero piezas separadas, cero holguras perimetrales
+scr_win_box = Part.makeBox(43.5, 8.0, 23.0, FreeCAD.Vector(-21.75, 14.0, 44.75))
 sw_edges = [e for e in scr_win_box.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.z - e.Vertexes[1].Point.z) < 0.01]
 scr_win_solid = scr_win_box.makeFillet(2.0, sw_edges)
 head_f = head_f.cut(scr_win_solid)
 
-# Cuna para modulo LCD ST7789V 2.0" Bare Panel (45.0 x 2.0 x 24.5mm en Z in [44.5, 69.0])
+# Pinhole coaxial para Camara OV2640 a Z = 71.0mm
+cam_aperture = Part.makeCylinder(1.3, 8.0, FreeCAD.Vector(0.0, 14.0, 71.0), FreeCAD.Vector(0, 1, 0))
+head_f = head_f.cut(cam_aperture)
+
+# Cuna interna para modulo LCD ST7789V 2.0" Bare Panel (45.0 x 2.0 x 24.5mm en Z in [44.5, 69.0])
 lcd_pocket = Part.makeBox(45.0, 2.0, 24.5, FreeCAD.Vector(-22.5, 15.2, 44.5))
 head_f = head_f.cut(lcd_pocket)
 
-# Cuna y abertura coaxial para Camara OV2640 (Z en [69.2, 75.2] - ARRIBA de LCD, CERO COLISION)
+# Cuna interna para Camara OV2640 (Z en [69.2, 75.2] - ARRIBA de LCD, CERO COLISION)
 cam_pocket = Part.makeBox(8.5, 3.0, 6.5, FreeCAD.Vector(-4.25, 13.5, 69.2))
-cam_aperture = Part.makeCylinder(1.3, 6.0, FreeCAD.Vector(0.0, 16.0, 71.0), FreeCAD.Vector(0, 1, 0))
-head_f = head_f.cut(cam_pocket).cut(cam_aperture)
+head_f = head_f.cut(cam_pocket)
 
 # Ranuras guia para Headboard PCB (46.0 x 1.6 x 30.0mm en Y = 11.5mm)
 rail_l = Part.makeBox(1.8, 1.9, 30.0, FreeCAD.Vector(-24.5, 11.3, 43.5))
@@ -211,22 +209,6 @@ conduit_r  = Part.makeCylinder(4.5, 8.0, FreeCAD.Vector(0.0, 0.0, 37.5), FreeCAD
 head_r = head_r.cut(neck_cup_r).cut(conduit_r)
 
 add_part(head_r, "Carcasa_Cabeza_Trasera", "2_Carcasa_Cabeza_Trasera", COLOR_BODY_CREAM)
-
-# Visor Frontal Panoramico 77% con ESQUINAS REDONDEADAS DE ENCASTRE PERFECTO (R=3.3mm, Encastre uniforme en rebate R=3.5mm)
-visor_box = Part.makeBox(50.6, 1.2, 29.1, FreeCAD.Vector(-25.3, 18.25, 43.7))
-v_edges = [e for e in visor_box.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.z - e.Vertexes[1].Point.z) < 0.01]
-visor_plate = visor_box.makeFillet(3.3, v_edges)
-
-# Pinhole stealth de camara en visor (Dia 2.6mm a Z = 71.0mm)
-v_cam_hole = Part.makeCylinder(1.3, 3.0, FreeCAD.Vector(0.0, 18.0, 71.0), FreeCAD.Vector(0, 1, 0))
-visor_plate = visor_plate.cut(v_cam_hole)
-
-# Ventana de visualizacion de display en visor con esquinas redondeadas (43.5 x 23.0mm, R=1.8mm)
-v_disp_box = Part.makeBox(43.5, 3.0, 23.0, FreeCAD.Vector(-21.75, 18.0, 44.75))
-vd_edges = [e for e in v_disp_box.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.z - e.Vertexes[1].Point.z) < 0.01]
-v_disp_solid = v_disp_box.makeFillet(1.8, vd_edges)
-visor_plate = visor_plate.cut(v_disp_solid)
-add_part(visor_plate, "Visor_Frontal_2Pulgadas", "3_Visor_Frontal_2Pulgadas", COLOR_VISOR_BLACK)
 
 # ==============================================================================
 # 3 & 4. CARCASA TORSO (TOP-DOWN ASSEMBLY: CHASIS BASE INFERIOR + TAPA SUPERIOR)
@@ -500,7 +482,6 @@ stl_export_map = {
     "02_Carcasa_Cabeza_Trasera.stl": doc.getObject("Carcasa_Cabeza_Trasera"),
     "03_Carcasa_Torso_Chasis.stl":   doc.getObject("Carcasa_Torso_Chasis"),
     "04_Carcasa_Torso_Tapa.stl":     doc.getObject("Carcasa_Torso_Tapa"),
-    "05_Visor_Frontal_2Pulgadas.stl": doc.getObject("Visor_Frontal_2Pulgadas"),
     "06_Difusor_Luz_Pecho.stl":      doc.getObject("Difusor_Luz_Pecho"),
     "07_Rueda_Traccion_L.stl":       doc.getObject("Rueda_Traccion_L"),
     "08_Rueda_Traccion_R.stl":       doc.getObject("Rueda_Traccion_R"),
