@@ -74,12 +74,10 @@ head_r_raw = head_solid.cut(cutter_front)
 
 head_f = head_f_raw
 
-# Cavidad interna frontal con soporte perimetral sólido para tornillería M2
-# Zona profunda (Y in [7.0, 16.5]): 48.0mm de ancho para alojar PCB 46mm y LCD 45mm
-cav_f_deep = Part.makeBox(48.0, 9.5, 31.0, FreeCAD.Vector(-24.0, 7.0, 43.0))
-# Zona de embocadura (Y in [0.0, 7.0]): 36.0mm de ancho (paredes sólidas continuas de 10.5mm en laterales)
-cav_f_entry = Part.makeBox(36.0, 7.0, 31.0, FreeCAD.Vector(-18.0, 0.0, 43.0))
-cav_f = cav_f_deep.fuse(cav_f_entry)
+# Cavidad interna frontal continua (47.6mm de ancho: paso libre para insertar LCD 45mm y PCB 46mm desde atras)
+cav_f = Part.makeBox(47.6, 16.5, 31.0, FreeCAD.Vector(-23.8, 0.0, 43.0))
+c_edges = [e for e in cav_f.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
+cav_f = cav_f.makeFillet(2.0, c_edges)
 head_f = head_f.cut(cav_f)
 
 # Ventana activa frontal para Pantalla 2.0" ST7789V integrada directamente en la carcasa (43.5 x 23.0mm, R=2.0mm)
@@ -106,9 +104,9 @@ rail_l = Part.makeBox(1.5, 1.8, 29.5, FreeCAD.Vector(-24.5, 10.6, 43.5))
 rail_r = Part.makeBox(1.5, 1.8, 29.5, FreeCAD.Vector(23.0, 10.6, 43.5))
 head_f = head_f.cut(rail_l).cut(rail_r)
 
-# Taladros roscados M2 100% integrados en paredes sólidas frontales (X = ±23.0, Z = 45.5 & 71.5)
+# Taladros roscados M2 100% integrados en paredes sólidas frontales (X = ±25.2, Z = 45.5 & 71.5)
 # ¡Cero tubos flotantes, cero gussets, cero pegotes! Perforación directa en pared lateral sólida
-h_boss_coords = [(-23.0, 71.5), (23.0, 71.5), (-23.0, 45.5), (23.0, 45.5)]
+h_boss_coords = [(-25.2, 71.5), (25.2, 71.5), (-25.2, 45.5), (25.2, 45.5)]
 for bx, bz in h_boss_coords:
     pilot = Part.makeCylinder(0.85, 6.0, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
     head_f = head_f.cut(pilot)
@@ -159,9 +157,9 @@ ear_l = make_cute_ear(-18.0, is_left=True)
 ear_r = make_cute_ear(18.0, is_left=False)
 head_r = head_r.fuse(ear_l).fuse(ear_r)
 
-# Cavidad interna trasera: 36.0mm de ancho (holgura limpia para servo SG90 y speaker 1511)
-# Deja paredes laterales 100% continuas y sólidas de 10.5mm donde se alojan los tornillos pasantes
-cav_r = Part.makeBox(36.0, 16.5, 31.0, FreeCAD.Vector(-18.0, -16.5, 43.0))
+# Cavidad interna trasera: 38.0mm de ancho (holgura limpia para servo SG90 y speaker 1511)
+# Deja paredes laterales 100% continuas y sólidas de 9.5mm donde se alojan los tornillos pasantes
+cav_r = Part.makeBox(38.0, 16.5, 31.0, FreeCAD.Vector(-19.0, -16.5, 43.0))
 cr_edges = [e for e in cav_r.Edges if abs(e.Vertexes[0].Point.x - e.Vertexes[1].Point.x) < 0.01 and abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
 cav_r = cav_r.makeFillet(2.5, cr_edges)
 head_r = head_r.cut(cav_r)
