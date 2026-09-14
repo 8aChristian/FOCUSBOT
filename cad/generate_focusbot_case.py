@@ -235,9 +235,9 @@ neck_conduit = Part.makeCylinder(4.5, 12.0, FreeCAD.Vector(0.0, 0.0, 34.0), Free
 tower_relief = Part.makeCylinder(6.5, 3.0, FreeCAD.Vector(0.0, -6.0, 39.5), FreeCAD.Vector(0, 0, 1))
 torso_solid = torso_solid.cut(neck_conduit).cut(tower_relief)
 
-# Cajeados de Rueda (Guardabarros) cerrados: R = 19.5mm (2.5mm holgura radial), ancho 9.5mm cubriendo 100% las ruedas
-recess_l = Part.makeCylinder(19.5, 9.5, FreeCAD.Vector(-41.0, 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
-recess_r = Part.makeCylinder(19.5, 9.5, FreeCAD.Vector(31.5, 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
+# Cajeados de Rueda (Guardabarros) optimizados: R = 19.5mm (2.5mm holgura radial), ancho 11.5mm con 1.5mm de holgura lateral simetrica
+recess_l = Part.makeCylinder(19.5, 11.5, FreeCAD.Vector(-42.5, 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
+recess_r = Part.makeCylinder(19.5, 11.5, FreeCAD.Vector(31.0, 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
 torso_solid = torso_solid.cut(recess_l).cut(recess_r)
 
 # Orificio casquillo eje motor N20 (Dia 3.4mm)
@@ -319,7 +319,7 @@ print("5. Engineering Smooth Traction Wheels...", flush=True)
 
 def make_smooth_wheel(is_left=True):
     sign = -1.0 if is_left else 1.0
-    w_width = 7.0
+    w_width = 8.5
     x_inner = sign * 32.5
     x_outer = sign * (32.5 + w_width)
     x_min, x_max = min(x_inner, x_outer), max(x_inner, x_outer)
@@ -327,25 +327,34 @@ def make_smooth_wheel(is_left=True):
     # Neumático cilíndrico liso: R = 17.00mm exacto -> diámetro 34.0mm, contacto Z = 0.00mm
     tire = Part.makeCylinder(17.00, w_width, FreeCAD.Vector(x_min, 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
     
-    # Cajeado para Aro Cyan en cara exterior: profundidad 2.0mm
-    x_recess_start = x_outer - sign * 2.0
-    r_cyl = Part.makeCylinder(12.5, 2.2, FreeCAD.Vector(min(x_outer, x_recess_start), 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
-    tire = tire.cut(r_cyl)
+    # Bisel / Chamfer suave en hombros del neumático (estilo RC Buggy, 0.8mm) para rodar suavemente sin enganches
+    tire_edges = [e for e in tire.Edges if hasattr(e, 'Curve') and isinstance(e.Curve, Part.Circle) and abs(e.Curve.Radius - 17.0) < 0.1]
+    if tire_edges:
+        tire = tire.makeChamfer(0.8, tire_edges)
     
-    # Tapa central de buje: Dia 6.0mm
-    cap = Part.makeCylinder(3.0, 1.2, FreeCAD.Vector(min(x_outer, x_outer - sign*1.2), 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
-    tire = tire.fuse(cap)
+    # Garganta anular para Aro Cyan en cara exterior: R in [9.8, 12.5], profundidad 2.0mm
+    x_groove_start = x_outer - sign * 2.0
+    x_g_min = min(x_outer, x_groove_start)
+    g_out = Part.makeCylinder(12.5, 2.2, FreeCAD.Vector(x_g_min, 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
+    g_in  = Part.makeCylinder(9.8,  2.4, FreeCAD.Vector(x_g_min - 0.1, 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
+    ring_groove = g_out.cut(g_in)
+    tire = tire.cut(ring_groove)
+    
+    # Detalle decorativo central en buje (rebaje de 0.4mm a R=3.2)
+    x_c_min = min(x_outer, x_outer - sign * 0.4)
+    c_recess = Part.makeCylinder(3.2, 0.4, FreeCAD.Vector(x_c_min, 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
+    tire = tire.cut(c_recess)
     
     # Casquillo interior de apoyo con reductora N20: Dia 5.5mm, longitud 0.6mm
     collar = Part.makeCylinder(2.75, 0.6, FreeCAD.Vector(x_inner if is_left else x_inner - 0.6, 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
     tire = tire.fuse(collar)
     
-    # Taladro eje D-shaft a traves de casquillo y buje
+    # Taladro eje D-shaft a traves de casquillo y buje macizo (profundidad 7.2mm)
     bore_dir = FreeCAD.Vector(-1, 0, 0) if is_left else FreeCAD.Vector(1, 0, 0)
     x_start = x_inner - sign * 0.65
-    bore = Part.makeCylinder(1.525, 6.2, FreeCAD.Vector(x_start, 0.0, 17.0), bore_dir)
-    x_box_min = min(x_start, x_start + bore_dir.x * 6.2)
-    flat = Part.makeBox(6.5, 4.0, 2.0, FreeCAD.Vector(x_box_min, -2.0, 18.0))
+    bore = Part.makeCylinder(1.525, 7.2, FreeCAD.Vector(x_start, 0.0, 17.0), bore_dir)
+    x_box_min = min(x_start, x_start + bore_dir.x * 7.2)
+    flat = Part.makeBox(7.5, 4.0, 2.0, FreeCAD.Vector(x_box_min, -2.0, 18.0))
     d_bore = bore.cut(flat)
     tire = tire.cut(d_bore)
     
@@ -358,7 +367,7 @@ add_part(wheel_right, "Rueda_Traccion_R", "8_Rueda_Traccion_R", COLOR_TIRE_RUBBE
 
 def make_cyan_ring(is_left=True):
     sign = -1.0 if is_left else 1.0
-    x_pos = sign * 37.8 if not is_left else sign * 39.2
+    x_pos = sign * 39.3 if not is_left else sign * 40.7
     r_out = Part.makeCylinder(12.2, 1.4, FreeCAD.Vector(x_pos, 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
     r_in  = Part.makeCylinder(10.0, 1.6, FreeCAD.Vector(x_pos - 0.1, 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
     return r_out.cut(r_in)
