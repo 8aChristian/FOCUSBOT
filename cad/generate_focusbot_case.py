@@ -4,7 +4,8 @@ import Part
 
 print(">>> [CASE PERFECTION ENGINE v12.0 - ROBOTICS ENGINEER] Generating Production-Grade FocusBot Case...", flush=True)
 
-out_dir = r"c:\Users\Christian Ochoa\Documents\antigravity\goofy-borg\cad"
+base_dir = os.path.dirname(os.path.abspath(__file__))
+out_dir = base_dir
 stl_dir = os.path.join(out_dir, "stl")
 os.makedirs(stl_dir, exist_ok=True)
 

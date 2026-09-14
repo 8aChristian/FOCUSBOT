@@ -1,6 +1,6 @@
-import FreeCAD, Part
-
-doc = FreeCAD.open(r"c:\Users\Christian Ochoa\Documents\antigravity\goofy-borg\cad\focusbot_case.FCStd")
+import os
+base_dir = os.path.dirname(os.path.abspath(__file__))
+doc = FreeCAD.open(os.path.join(base_dir, "focusbot_case.FCStd"))
 
 head_f    = doc.getObject("Carcasa_Cabeza_Frontal").Shape
 head_r    = doc.getObject("Carcasa_Cabeza_Trasera").Shape

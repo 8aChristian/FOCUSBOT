@@ -1,7 +1,7 @@
 # FOCUSBOT: Open-Source Autonomous AI Desktop Companion Robot
 
 <p align="center">
-  <img src="docs/images/focusbot_case_3d.png" alt="FocusBot 3D Mechatronic Enclosure Render" width="750">
+  <img src="docs/images/focusbotcase3d (2).png" alt="FocusBot 3D Mechatronic Enclosure Render" width="750">
 </p>
 
 <p align="center">
