@@ -236,6 +236,66 @@
  C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp32-camera/conversions/include/img_converters.h \
  C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp32-camera/conversions/include/esp_jpg_decode.h \
  src/voice_ear.h src/connectivity_bridge.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFi.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/cores/esp32/IPv6Address.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiType.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiSTA.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiGeneric.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_wifi/include/esp_smartconfig.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/wifi_provisioning/include/wifi_provisioning/manager.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/protocomm/include/common/protocomm.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/protocomm/include/security/protocomm_security.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/wifi_provisioning/include/wifi_provisioning/wifi_config.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiAP.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiScan.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiClient.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/cores/esp32/Client.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiServer.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/cores/esp32/Server.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/cores/esp32/Udp.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/cores/esp32/cbuf.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/WiFiClientSecure.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src/ssl_client.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/platform.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/port/include/mbedtls/esp_config.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/config.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/check_config.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/port/include/esp_mem.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/platform_time.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/net.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/net_sockets.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ssl.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/port/include/mbedtls/bignum.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/bignum.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ecp.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ssl_ciphersuites.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/pk.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/md.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/platform_util.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/rsa.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ecdsa.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/cipher.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/x509_crt.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/x509.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/asn1.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/x509_crl.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/dhm.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ecdh.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/debug.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/entropy.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/sha512.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/port/include/sha512_alt.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/include/hal/sha_types.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_rom/include/esp32s3/rom/sha.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ctr_drbg.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/aes.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/port/include/aes_alt.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/port/include/aes/esp_aes.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/hal/include/hal/aes_types.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/mbedtls/mbedtls/include/mbedtls/error.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/HTTPClient/src/HTTPClient.h \
+ C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiClient.h \
  C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src/BLEDevice.h \
  C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/bt/host/bluedroid/api/include/api/esp_gap_ble_api.h \
  C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/bt/host/bluedroid/api/include/api/esp_bt_defs.h \
@@ -265,26 +325,8 @@
  C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src/BLEServer.h \
  C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src/BLEUtils.h \
  C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src/BLE2902.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFi.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/cores/esp32/IPv6Address.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiType.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiSTA.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiGeneric.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_wifi/include/esp_smartconfig.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/wifi_provisioning/include/wifi_provisioning/manager.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/protocomm/include/common/protocomm.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/protocomm/include/security/protocomm_security.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/wifi_provisioning/include/wifi_provisioning/wifi_config.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiAP.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiScan.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiClient.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/cores/esp32/Client.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiServer.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/cores/esp32/Server.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/cores/esp32/Udp.h \
- C:/Users/Christian\ Ochoa/.platformio/packages/framework-arduinoespressif32/cores/esp32/cbuf.h \
  .pio/libdeps/focusbot_esp32s3/ArduinoJson/src/ArduinoJson.h \
  .pio/libdeps/focusbot_esp32s3/ArduinoJson/src/ArduinoJson.hpp \
  .pio/libdeps/focusbot_esp32s3/ArduinoJson/src/ArduinoJson/Configuration.hpp \
- src/battery_monitor.h include/focusbot_llm_persona.h
+ include/credentials.h include/focusbot_llm_persona.h \
+ src/battery_monitor.h

@@ -302,6 +302,7 @@ void setup() {
 
     delay(300);
     bleBridge.init();
+    display.showBootDiagnostic("Wi-Fi Cloud Link", bleBridge.isWifiConnected(), 95);
 
     Serial.println("[FocusBot] All subsystems online — starting wakeup sequence");
 
@@ -370,13 +371,21 @@ void loop() {
             // ---- Wakeword ("Hey FocusBot") ------------------------------
             case VOICE_WAKEWORD_DETECTED:
                 display.setIllumination(ILLUM_PULSE_THINKING);
-                display.setExpression(EXPR_SURPRISED);
+                display.setExpression(EXPR_THINKING);
                 audio.play(SND_CONFIRM_BOOP);
-                neck.nodYes();
-                delay(400);
-                display.setExpression(EXPR_FOCUSED);
+                neck.tiltCute();
                 motors.stop();
-                if (bleBridge.isConnected()) switchMode(MODE_LLM_COMPANION);
+
+                if (bleBridge.isWifiConnected()) {
+                    String reply = bleBridge.queryCloudLlm("¡Hola FocusBot! Dime algo tierno y motivador para concentrarme.");
+                    handleLlmReaction(reply);
+                    Serial.printf("[Cloud LLM] %s\n", reply.c_str());
+                } else if (bleBridge.isConnected()) {
+                    switchMode(MODE_LLM_COMPANION);
+                } else {
+                    display.setExpression(EXPR_WINK);
+                    audio.play(SND_HAPPY_CHIRP);
+                }
                 break;
 
             // ---- Startled by loud noise ----------------------------------

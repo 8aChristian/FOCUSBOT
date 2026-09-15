@@ -9,6 +9,9 @@ scratch/
 *.rpt
 *.jsonl
 
+# Private Credentials & API keys
+firmware/include/credentials.h
+
 # KiCad temporary & user state files
 *-backups/
 .mcp-backups/

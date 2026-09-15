@@ -1,12 +1,16 @@
-#pragma once
+﻿#pragma once
 #include <Arduino.h>
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <HTTPClient.h>
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
-#include <WiFi.h>
 #include <ArduinoJson.h>
 #include "robot_types.h"
+#include "credentials.h"
+#include "focusbot_llm_persona.h"
 
 // UUIDs for FocusBot BLE Service
 #define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
@@ -19,6 +23,12 @@ public:
     ConnectivityBridge();
     bool init();
     void update();
+    
+    // Wi-Fi Direct Cloud AI
+    bool isWifiConnected();
+    String queryCloudLlm(const String& userPrompt);
+
+    // Bluetooth BLE (Optional mobile bridge)
     bool isConnected();
     void sendTelemetry(RobotMode mode, int batteryPct, int focusScore);
     String pollIncomingLlmMessage();
@@ -29,6 +39,9 @@ public:
     void onWrite(BLECharacteristic* pCharacteristic) override;
 
 private:
+    bool wifiOnline;
+    uint32_t lastWifiCheckMs;
+
     bool bleConnected;
     BLEServer* pServer;
     BLECharacteristic* pTxChar;
@@ -36,4 +49,9 @@ private:
     BLECharacteristic* pLlmChar;
     String lastLlmResponse;
     bool hasNewLlmResponse;
+
+    String callOpenAI(const String& prompt);
+    String callGemini(const String& prompt);
+    String callClaude(const String& prompt);
+    String callOllama(const String& prompt);
 };
