@@ -1,4 +1,4 @@
-﻿# FOCUSBOT: Open-Source Autonomous AI Desktop Companion Robot
+# FOCUSBOT: Open-Source Autonomous AI Desktop Companion Robot
 
 <p align="center">
   <img src="docs/images/renderfocusbotdefrente.jpg" alt="FocusBot Front View Render" width="48.5%">
@@ -262,36 +262,78 @@ El motor visual procedural ([`display_engine.cpp`](firmware/src/display_engine.c
 
 ---
 
-## 📋 Lista de Materiales (BOM)
+## 📋 SuperBOM: Lista Maestra de Componentes, Enlaces y Costos
 
-### Electrónica y Actuadores:
-| Ref | Componente | Descripción | Cant. | Formato / Encapsulado |
-| :--- | :--- | :--- | :---: | :--- |
-| **U1** | ESP32-S3-WROOM-1 | MCU Dual-Core 240MHz, 16MB Flash, 8MB PSRAM | 1 | SMD Module |
-| **U6** | DRV8833PWP | Driver Motores Dual H-Bridge 1.5A RMS | 1 | HTSSOP-16 |
-| **U2** | TP4056 | Cargador Lineal de Batería LiPo 1A USB-C | 1 | SOP-8-PP |
-| **U3/U4** | DW01A + FS8205A | Protección de Sobrecarga y Sobredescarga LiPo | 1 | SOT-23-6 / TSSOP-8 |
-| **U5** | SY8089AAAC | Regulador Step-Down Conmutado 2A 3.3V | 1 | SOT-23-5 |
-| **U7** | MAX98357A | Amplificador de Audio I2S Clase D 3.2W | 1 | QFN-16 |
-| **U8** | MPU-6050 | IMU 6-DOF (Giroscopio + Acelerómetro) | 1 | QFN-24 |
-| **M1, M2** | Motores N20 | Motorreductor metálico DC 6V 300 RPM con eje D-shaft | 2 | N20 Estándar |
-| **SRV1** | Servo SG90 | Micro-servo 9g para paneo horizontal de cuello | 1 | Cuna cabeza |
-| **DISP1**| ST7789V 2.0" IPS | Panel LCD 240x320 SPI 3.3V bare panel | 1 | Marco frontal |
-| **CAM1** | Cámara OV2640 | Módulo sensor de cámara 2.0 MP DVP | 1 | Cuna coaxial |
-| **MIC1** | INMP441 | Micrófono MEMS digital omnidireccional I2S | 1 | Headboard |
-| **SPK1** | Parlante 1511 | Micro-parlante rectangular 8 Ohm 1W (15x11x3.5 mm) | 1 | Cavidad trasera |
-| **BAT1** | Batería LiPo 1S | Batería recargable 3.7V 500 mAh (38x20x7 mm) | 1 | Bahía suelo |
-| **J_USB** | Conector USB-C | Receptáculo USB Tipo C 16 Pines | 1 | Mid-Mount SMD |
+Guía de compra optimizada para **máximo ahorro**, priorizando la fabricación de placas vírgenes (*bare PCBs*) y la adquisición de componentes por separado sin ensamblaje costoso de fábrica.
 
-### Tornillería y Mecánica:
-| Tipo | Especificación | Uso | Cant. |
+---
+
+### 1. Componentes Externos (Modulares / Sin soldar a placa)
+
+Se conectan directamente a las placas mediante cables y conectores:
+
+| Componente | Enlaces de Compra Directa | Rango de Precio Estimado | Formato Habitual |
+| :--- | :--- | :---: | :--- |
+| **Batería LiPo 3.7V 500mAh**<br>(Conector JST-PH 2.0 mm) | • [AliExpress (Opción Económica)](https://www.aliexpress.com/item/32814862683.html)<br>• [Amazon (Envío Rápido)](https://www.amazon.com/dp/B0D3F67N6F) | **$4.00 – $9.00 USD** | Unidad con circuito de protección PCM integrado |
+| **Micromotores N20 metálicos**<br>(6V 300 RPM con reductora) | • [AliExpress (N20 Gearmotor)](https://www.aliexpress.com/item/1005005519903657.html) | **$1.50 – $2.50 USD** | Por unidad (se requieren 2: Izquierdo y Derecho) |
+| **Cables chicote JST-SH 1.0 mm**<br>(2 pines pre-crimpeados para motores/parlante) | • [AliExpress (Cables JST-SH 1.0 mm)](https://www.aliexpress.com/item/1005011595323701.html) | **$1.50 – $2.50 USD** | Paquete de 10 a 20 cables con conector hembra |
+| **Micro-servo SG90 9g**<br>(Giro horizontal de cuello) | • [Amazon (Opción 1)](https://www.amazon.com/dp/B07L2SF3R4)<br>• [Amazon (Opción Alternativa)](https://www.amazon.com/dp/B01M5LIKLQ) | **$2.50 – $4.00 USD** | Unidad individual con juego de brazos/horns |
+| **Micro-Parlante 1511**<br>(8 $\Omega$ 1W, $15 \times 11 \times 3.5\text{ mm}$) | • [AliExpress (Parlante 1511 Box)](https://www.aliexpress.com/i/1680403579.html) | **$0.90 – $1.70 USD** | Unidad suelta o lote de 5 a 10 piezas ($2.50 - $3.50) |
+| **Cámara OV2640**<br>(Flex cinta 24 pines paso 0.5 mm) | • [AliExpress (OV2640 Módulo Cámara)](https://www.aliexpress.com/wholesale?catId=0&SearchText=OV2640) | **$2.80 – $4.50 USD** | Módulo de cámara con lente estándar |
+| **Pantalla IPS LCD ST7789 2.0"**<br>(SPI 240x320, bare panel) | • [AliExpress (ST7789 2.0" IPS)](https://www.aliexpress.com/item/1005009314410563.html)<br>• [AliExpress (Opción Alternativa)](https://www.aliexpress.com/item/1005012615180387.html) | **$3.50 – $5.50 USD** | Panel individual IPS 240x320 |
+
+---
+
+### 2. Elementos de Interconexión Flexible y Zócalos ZIF
+
+| Componente | Enlaces de Compra Directa | Rango de Precio Estimado | Formato Habitual |
+| :--- | :--- | :---: | :--- |
+| **Cable plano flexible FPC 24 pines**<br>(Paso 0.5 mm, Tipo A o Tipo B) | • [AliExpress (FPC 24P 0.5 mm)](https://www.aliexpress.com/i/1005006038283095.html)<br>• [AliExpress (Opción Alternativa)](https://www.aliexpress.com/i/4000022157163.html) | **$0.50 – $1.00 USD** | Paquete de 2 a 5 cables |
+| **Conector ZIF 24 pines 0.5 mm SMD**<br>(Seguro abatible / Bottom Contact) | • [AliExpress (ZIF 24P 0.5 mm)](https://www.aliexpress.com/i/1005004233136813.html)<br>• [AliExpress (Opción Alternativa)](https://www.aliexpress.com/item/32850399481.html) | **$1.50 – $2.50 USD** | Tira o lote de 10 conectores para placa |
+| **Conector hembra USB-C SMD 16 pines**<br>(Carga y datos nativos) | • [AliExpress (USB-C 16P SMD)](https://www.aliexpress.com/i/1005006257173539.html) | **$1.70 – $2.50 USD** | Lote de 5 a 10 conectores hembra |
+
+---
+
+### 3. Circuitos Integrados y Semiconductores para Soldar (SMD)
+
+Comprados sueltos o en lote económico para soldar manualmente o con pasta de estaño y aire caliente:
+
+| Componente / Circuito Integrado | Enlace Catálogo JLCPCB / LCSC / AliExpress | Precio Unitario Estimado |
+| :--- | :--- | :---: |
+| **ESP32-S3-WROOM-1-N8R8 / N16R8** | • [JLCPCB (C2913201)](https://jlcpcb.com/partdetail/3198299-ESP32_S3_WROOM_1N8R8/C2913201)<br>• [LCSC (C2913201)](https://www.lcsc.com/product-detail/C2913201.html) | **$3.50 – $4.40 USD** |
+| **DRV8833PWP (Driver Puente H Dual)** | • [AliExpress (Chips DRV8833)](https://www.aliexpress.com/item/1005008600208107.html)<br>• [AliExpress (Opción 2)](https://www.aliexpress.com/item/1005005236496976.html) | **$0.70 – $1.30 USD** |
+| **TP4056 (Cargador LiPo)** | • [AliExpress / LCSC](https://www.aliexpress.com/item/1005008600208107.html) | **$0.15 – $0.30 USD** |
+| **DW01A + FS8205A (Protección LiPo)** | • LCSC / AliExpress (SOT-23-6 / TSSOP-8) | **$0.10 – $0.25 USD** |
+| **SY8089AAAC (Regulador Step-Down 2A)** | • [LCSC (C78988)](https://www.lcsc.com/product-detail/DC-DC-Converters_Silergy-Corp-SY8089AAAC_C78988.html) | **$0.20 – $0.40 USD** |
+| **MAX98357AETE+T (Amplificador I2S)** | • [JLCPCB (C910544)](https://jlcpcb.com/partdetail/MaximIntegrated-MAX98357AETET/C910544)<br>• [LCSC (C910544)](https://www.lcsc.com/product-detail/C910544.html) | **$0.90 – $1.20 USD** |
+| **MPU-6050 (IMU 6 Ejes)** | • JLCPCB / LCSC / AliExpress (QFN-24) | **$1.20 – $2.20 USD** |
+| **INMP441 (Micrófono MEMS LGA-9)** | • [AliExpress (INMP441 SMD suelto)](https://he.aliexpress.com/item/1005007633632817.html) | **$1.50 – $3.00 USD** |
+| **Componentes Pasivos y Discretos 0603**<br>(Inductor 2.2µH, AO3401A, SS14, BAT54, R, C) | • Kits surtidos 0603 en AliExpress / LCSC | **$0.50 – $1.50 USD**<br>*(costo total agrupado)* |
+
+---
+
+### 4. Fabricación de PCBs y Costo de Impresión 3D
+
+| Ítem | Proveedor / Proceso | Detalle de Costo | Costo por Robot |
 | :--- | :--- | :--- | :---: |
-| **Tornillo M2** | M2 x 8 mm Cabeza Cilíndrica Allen | Cierre de carcasa de cabeza (trasera) | 4 |
-| **Tornillo M2** | M2 x 10 mm Cabeza Cilíndrica Allen | Cierre de chasis torso a tapa (desde abajo) | 4 |
-| **Tornillo M2** | M2 x 4 mm Cabeza Alomada | Fijación de Mainboard PCB a standoffs | 4 |
-| **Tornillo M1.7**| M1.7 x 4 mm Autorroscante | Sujeción de aletas de servo SG90 | 2 |
-| **Bolas Caster**| $\varnothing 8.0\text{ mm}$ Acero Inoxidable | Apoyo omnidireccional delantero y trasero | 2 |
-| **Cable FPC** | FPC 24 Pines Paso 0.5 mm (100 mm) | Interconexión entre Mainboard y Headboard | 1 |
+| **Mainboard PCB (Placa Virgen)** | JLCPCB / PCBWay (2 capas, FR4) | Pedido estándar de 5 placas por **$2.00 USD** | **$0.40 – $1.00 USD** |
+| **Headboard PCB (Placa Virgen)** | JLCPCB / PCBWay (2 capas, FR4) | Pedido estándar de 5 placas por **$2.00 USD** | **$0.40 – $1.00 USD** |
+| **Carcasa Impresa en 3D** | Impresora FDM doméstica (PLA+ / PETG / TPU) | Consumo total de filamento: ~110–130 gramos (carcasa, ruedas, difusor) a ~$18–$22/kg | **$2.00 – $3.00 USD** |
+| **Tornillería y Bolas de Rodamiento** | 8x Tornillos M2 + 2x Bolas acero 8 mm | Comprados en ferretería o kit surtido M2 | **$0.80 – $1.50 USD** |
+
+---
+
+### 💰 Resumen de Inversión Global (Total Build Cost)
+
+*Sin incluir gastos de envío internacional:*
+
+| Categoría | Rango de Costo (USD) |
+| :--- | :---: |
+| **1. Componentes Modulares Externos** (Cámara, LCD, servo, 2 motores N20, batería LiPo, parlante y cables) | **$20.00 – $32.00 USD** |
+| **2. Circuitos Integrados y Semiconductores SMD** | **$9.00 – $15.00 USD** |
+| **3. Placas de Circuito Impreso Vírgenes (Mainboard + Headboard)** | **$0.80 – $2.00 USD** |
+| **4. Materiales de Impresión 3D y Tornillería** | **$2.80 – $4.50 USD** |
+| **COSTO TOTAL ESTIMADO POR ROBOT COMPLETO** | **$32.60 – $53.50 USD** |
 
 ---
 
