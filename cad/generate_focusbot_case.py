@@ -126,45 +126,53 @@ print("2. Engineering Carcasa Cabeza Trasera...", flush=True)
 
 head_r = head_r_raw
 
-def make_cute_ear(center_x, is_left=True):
-    sign = -1.0 if is_left else 1.0
-    # Base sólida incrustada a Z=75.0mm (fusión perfecta con techo de cabeza)
-    b_z = 75.0
-    bp_front = FreeCAD.Vector(center_x - sign * 5.0, -0.5, b_z)
-    bp_outer = FreeCAD.Vector(center_x + sign * 7.5, -5.5, b_z)
-    bp_rear  = FreeCAD.Vector(center_x - sign * 4.5, -11.5, b_z)
-    w_base = Part.Wire([Part.makeLine(bp_front, bp_outer), Part.makeLine(bp_outer, bp_rear), Part.makeLine(bp_rear, bp_front)])
+def make_round_cat_ear():
+    # Oreja izquierda canónica estilizada a X = -18.5mm con curvas BSpline orgánicas redondeadas
+    center_x = -18.5
+    b_z = 75.5
     
-    # Sección media estilizada a Z=80.5mm
-    m_z = 80.5
-    mp_front = FreeCAD.Vector(center_x - sign * 1.7, -1.8, m_z)
-    mp_outer = FreeCAD.Vector(center_x + sign * 7.0, -5.5, m_z)
-    mp_rear  = FreeCAD.Vector(center_x - sign * 1.3, -10.0, m_z)
-    w_mid = Part.Wire([Part.makeLine(mp_front, mp_outer), Part.makeLine(mp_outer, mp_rear), Part.makeLine(mp_rear, mp_front)])
+    # Base redondeada suave (perfil petaliforme ovalado)
+    p1 = FreeCAD.Vector(center_x + 5.0, -0.6, b_z)
+    p2 = FreeCAD.Vector(center_x - 7.5, -4.8, b_z)
+    p3 = FreeCAD.Vector(center_x - 5.5, -9.8, b_z)
+    p4 = FreeCAD.Vector(center_x + 3.5, -8.8, b_z)
+    w_base = Part.Wire(Part.BSplineCurve([p1, p2, p3, p4, p1]).toShape())
     
-    # Punta curvada y redondeada a Z=85.5mm (estética felina bio-inspirada)
-    t_z = 85.5
-    tip_center = FreeCAD.Vector(center_x + sign * 3.8, -5.8, t_z)
-    w_tip = Part.Wire([Part.makeCircle(1.5, tip_center, FreeCAD.Vector(sign * 0.35, -0.15, 1.0))])
+    # Sección media suave y curvada a Z = 81.5mm
+    m_z = 81.5
+    mp1 = FreeCAD.Vector(center_x + 2.5, -1.8, m_z)
+    mp2 = FreeCAD.Vector(center_x - 7.5, -4.8, m_z)
+    mp3 = FreeCAD.Vector(center_x - 5.8, -8.5, m_z)
+    mp4 = FreeCAD.Vector(center_x + 1.2, -7.8, m_z)
+    w_mid = Part.Wire(Part.BSplineCurve([mp1, mp2, mp3, mp4, mp1]).toShape())
+    
+    # Cúpula redondeada suave a Z = 85.8mm (corona redonda bio-inspirada, radio 2.4mm)
+    t_z = 85.8
+    tip_c = FreeCAD.Vector(center_x - 3.2, -5.2, t_z)
+    w_tip = Part.Wire(Part.makeCircle(2.4, tip_c, FreeCAD.Vector(-0.25, -0.15, 1.0)))
+    
     ear_solid = Part.makeLoft([w_base, w_mid, w_tip], True)
     
-    # Vaciado / concha interior frontal para relieve estético y efecto 3D
-    sc_base_front = FreeCAD.Vector(center_x - sign * 3.8, -1.2, 76.8)
-    sc_base_outer = FreeCAD.Vector(center_x + sign * 5.2, -5.2, 76.8)
-    sc_base_rear  = FreeCAD.Vector(center_x - sign * 2.5, -8.8, 76.8)
-    w_sc_base = Part.Wire([Part.makeLine(sc_base_front, sc_base_outer), Part.makeLine(sc_base_outer, sc_base_rear), Part.makeLine(sc_base_rear, sc_base_front)])
+    # Vaciado interior / concha redondeada frontal-lateral
+    sp1 = FreeCAD.Vector(center_x + 3.6, -1.5, 76.8)
+    sp2 = FreeCAD.Vector(center_x - 5.5, -4.5, 76.8)
+    sp3 = FreeCAD.Vector(center_x - 3.8, -8.0, 76.8)
+    sp4 = FreeCAD.Vector(center_x + 2.2, -7.0, 76.8)
+    w_sb = Part.Wire(Part.BSplineCurve([sp1, sp2, sp3, sp4, sp1]).toShape())
     
-    sc_mid_f = FreeCAD.Vector(center_x - sign * 0.8, -2.2, 81.0)
-    sc_mid_o = FreeCAD.Vector(center_x + sign * 5.0, -5.0, 81.0)
-    sc_mid_r = FreeCAD.Vector(center_x - sign * 0.0, -7.8, 81.0)
-    w_sc_mid = Part.Wire([Part.makeLine(sc_mid_f, sc_mid_o), Part.makeLine(sc_mid_o, sc_mid_r), Part.makeLine(sc_mid_r, sc_mid_f)])
+    smp1 = FreeCAD.Vector(center_x + 1.4, -2.2, 81.8)
+    smp2 = FreeCAD.Vector(center_x - 5.5, -4.5, 81.8)
+    smp3 = FreeCAD.Vector(center_x - 4.0, -7.0, 81.8)
+    smp4 = FreeCAD.Vector(center_x + 0.4, -6.5, 81.8)
+    w_sm = Part.Wire(Part.BSplineCurve([smp1, smp2, smp3, smp4, smp1]).toShape())
     
-    sc_tip = Part.Wire([Part.makeCircle(0.9, FreeCAD.Vector(center_x + sign * 3.0, -5.4, 84.5), FreeCAD.Vector(sign * 0.35, -0.15, 1.0))])
-    scoop = Part.makeLoft([w_sc_base, w_sc_mid, sc_tip], True)
+    w_st = Part.Wire(Part.makeCircle(1.3, FreeCAD.Vector(center_x - 2.8, -4.8, 84.8), FreeCAD.Vector(-0.25, -0.15, 1.0)))
+    scoop = Part.makeLoft([w_sb, w_sm, w_st], True)
+    
     return ear_solid.cut(scoop)
 
-ear_l = make_cute_ear(-18.5, is_left=True)
-ear_r = make_cute_ear(18.5, is_left=False)
+ear_l = make_round_cat_ear()
+ear_r = ear_l.mirror(FreeCAD.Vector(0,0,0), FreeCAD.Vector(1,0,0))
 head_r = head_r.fuse(ear_l).fuse(ear_r)
 
 # Cavidad interna trasera: 38.0mm de ancho (holgura limpia para servo SG90 y speaker 1511)
@@ -229,7 +237,14 @@ torso_solid = torso_box.makeFillet(6.0, tv_edges)
 th_edges = [e for e in torso_solid.Edges if abs(e.Vertexes[0].Point.z - z_tmax) < 0.05 or abs(e.Vertexes[0].Point.z - z_tmin) < 0.05]
 torso_solid = torso_solid.makeFillet(2.5, th_edges)
 
-# Anillo Macho de Tornamesa de Cuello: Dia 18.0mm, Altura 1.0mm sobre el torso (Z=40.0 a 42.0mm)
+# Cajeado de holgura de cuello flotante (0.8mm de holgura de aire perimetral entre cabeza y torso):
+# Rebaje de Z=40.2 a 41.0mm fuera del radio R=11.0mm de la tornamesa
+relief_box = Part.makeBox(w_t + 10.0, d_t + 10.0, 0.9, FreeCAD.Vector(-w_t/2 - 5.0, -d_t/2 - 5.0, 40.2))
+turntable_boss = Part.makeCylinder(11.0, 1.2, FreeCAD.Vector(0.0, 0.0, 40.0), FreeCAD.Vector(0, 0, 1))
+hood_relief = relief_box.cut(turntable_boss)
+torso_solid = torso_solid.cut(hood_relief)
+
+# Anillo Macho de Tornamesa de Cuello: Dia 18.0mm, Altura 1.0mm sobre el boss (Z=40.0 a 42.0mm)
 neck_ring = Part.makeCylinder(9.0, 2.0, FreeCAD.Vector(0.0, 0.0, 40.0), FreeCAD.Vector(0, 0, 1))
 torso_solid = torso_solid.fuse(neck_ring)
 
