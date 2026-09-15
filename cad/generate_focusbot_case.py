@@ -112,9 +112,9 @@ for bx, bz in h_boss_coords:
     pilot = Part.makeCylinder(0.85, 6.0, FreeCAD.Vector(bx, 0.0, bz), FreeCAD.Vector(0, 1, 0))
     head_f = head_f.cut(pilot)
 
-# Copa hembra de tornamesa en cuello inferior (Dia 18.6mm, Altura 3.5mm, Z in [37.5, 41.0])
-neck_cup_f = Part.makeCylinder(9.3, 3.5, FreeCAD.Vector(0.0, 0.0, 37.5), FreeCAD.Vector(0, 0, 1))
-conduit_f  = Part.makeCylinder(4.5, 8.0, FreeCAD.Vector(0.0, 0.0, 37.5), FreeCAD.Vector(0, 0, 1))
+# Copa hembra de tornamesa en cuello inferior (Dia 18.6mm, Altura 1.2mm, Z in [41.0, 42.2])
+neck_cup_f = Part.makeCylinder(9.3, 1.2, FreeCAD.Vector(0.0, 0.0, 41.0), FreeCAD.Vector(0, 0, 1))
+conduit_f  = Part.makeCylinder(4.5, 8.0, FreeCAD.Vector(0.0, 0.0, 40.0), FreeCAD.Vector(0, 0, 1))
 head_f = head_f.cut(neck_cup_f).cut(conduit_f)
 
 add_part(head_f, "Carcasa_Cabeza_Frontal", "1_Carcasa_Cabeza_Frontal", COLOR_BODY_CREAM)
@@ -128,34 +128,43 @@ head_r = head_r_raw
 
 def make_cute_ear(center_x, is_left=True):
     sign = -1.0 if is_left else 1.0
-    b_x, b_y, b_z = center_x, -4.0, 76.0
-    p1 = FreeCAD.Vector(b_x - sign * 5.5, b_y - 2.5, b_z)
-    p2 = FreeCAD.Vector(b_x + sign * 6.5, b_y - 2.5, b_z)
-    p3 = FreeCAD.Vector(b_x - sign * 2.0, b_y + 3.5, b_z)
-    w1 = Part.Wire([Part.makeLine(p1, p2), Part.makeLine(p2, p3), Part.makeLine(p3, p1)])
+    # Base sólida incrustada a Z=75.0mm (fusión perfecta con techo de cabeza)
+    b_z = 75.0
+    bp_front = FreeCAD.Vector(center_x - sign * 5.0, -0.5, b_z)
+    bp_outer = FreeCAD.Vector(center_x + sign * 7.5, -5.5, b_z)
+    bp_rear  = FreeCAD.Vector(center_x - sign * 4.5, -11.5, b_z)
+    w_base = Part.Wire([Part.makeLine(bp_front, bp_outer), Part.makeLine(bp_outer, bp_rear), Part.makeLine(bp_rear, bp_front)])
     
-    m_x, m_y, m_z = center_x + sign * 1.5, -6.0, 78.5
-    p4 = FreeCAD.Vector(m_x - sign * 5.0, m_y - 3.0, m_z)
-    p5 = FreeCAD.Vector(m_x + sign * 4.2, m_y - 1.5, m_z)
-    p6 = FreeCAD.Vector(m_x - sign * 1.2, m_y + 2.5, m_z)
-    w2 = Part.Wire([Part.makeLine(p4, p5), Part.makeLine(p5, p6), Part.makeLine(p6, p4)])
+    # Sección media estilizada a Z=80.5mm
+    m_z = 80.5
+    mp_front = FreeCAD.Vector(center_x - sign * 1.7, -1.8, m_z)
+    mp_outer = FreeCAD.Vector(center_x + sign * 7.0, -5.5, m_z)
+    mp_rear  = FreeCAD.Vector(center_x - sign * 1.3, -10.0, m_z)
+    w_mid = Part.Wire([Part.makeLine(mp_front, mp_outer), Part.makeLine(mp_outer, mp_rear), Part.makeLine(mp_rear, mp_front)])
     
-    t_x, t_y, t_z = center_x + sign * 2.8, -7.0, 80.0
-    w3 = Part.Wire([Part.makeCircle(1.2, FreeCAD.Vector(t_x, t_y, t_z), FreeCAD.Vector(sign * 0.3, -0.2, 1.0))])
+    # Punta curvada y redondeada a Z=85.5mm (estética felina bio-inspirada)
+    t_z = 85.5
+    tip_center = FreeCAD.Vector(center_x + sign * 3.8, -5.8, t_z)
+    w_tip = Part.Wire([Part.makeCircle(1.5, tip_center, FreeCAD.Vector(sign * 0.35, -0.15, 1.0))])
+    ear_solid = Part.makeLoft([w_base, w_mid, w_tip], True)
     
-    ear_solid = Part.makeLoft([w1, w2, w3], True)
+    # Vaciado / concha interior frontal para relieve estético y efecto 3D
+    sc_base_front = FreeCAD.Vector(center_x - sign * 3.8, -1.2, 76.8)
+    sc_base_outer = FreeCAD.Vector(center_x + sign * 5.2, -5.2, 76.8)
+    sc_base_rear  = FreeCAD.Vector(center_x - sign * 2.5, -8.8, 76.8)
+    w_sc_base = Part.Wire([Part.makeLine(sc_base_front, sc_base_outer), Part.makeLine(sc_base_outer, sc_base_rear), Part.makeLine(sc_base_rear, sc_base_front)])
     
-    s1 = FreeCAD.Vector(b_x - sign * 5.0, b_y - 1.8, b_z + 1.2)
-    s2 = FreeCAD.Vector(b_x + sign * 4.0, b_y - 0.8, b_z + 1.2)
-    s3 = FreeCAD.Vector(b_x - sign * 1.0, b_y + 2.5, b_z + 1.2)
-    sw1 = Part.Wire([Part.makeLine(s1, s2), Part.makeLine(s2, s3), Part.makeLine(s3, s1)])
-    st_x, st_y, st_z = center_x + sign * 2.0, -5.8, 79.0
-    sw2 = Part.Wire([Part.makeCircle(0.8, FreeCAD.Vector(st_x, st_y, st_z), FreeCAD.Vector(sign * 0.3, -0.2, 1.0))])
-    scoop = Part.makeLoft([sw1, sw2], True)
+    sc_mid_f = FreeCAD.Vector(center_x - sign * 0.8, -2.2, 81.0)
+    sc_mid_o = FreeCAD.Vector(center_x + sign * 5.0, -5.0, 81.0)
+    sc_mid_r = FreeCAD.Vector(center_x - sign * 0.0, -7.8, 81.0)
+    w_sc_mid = Part.Wire([Part.makeLine(sc_mid_f, sc_mid_o), Part.makeLine(sc_mid_o, sc_mid_r), Part.makeLine(sc_mid_r, sc_mid_f)])
+    
+    sc_tip = Part.Wire([Part.makeCircle(0.9, FreeCAD.Vector(center_x + sign * 3.0, -5.4, 84.5), FreeCAD.Vector(sign * 0.35, -0.15, 1.0))])
+    scoop = Part.makeLoft([w_sc_base, w_sc_mid, sc_tip], True)
     return ear_solid.cut(scoop)
 
-ear_l = make_cute_ear(-18.0, is_left=True)
-ear_r = make_cute_ear(18.0, is_left=False)
+ear_l = make_cute_ear(-18.5, is_left=True)
+ear_r = make_cute_ear(18.5, is_left=False)
 head_r = head_r.fuse(ear_l).fuse(ear_r)
 
 # Cavidad interna trasera: 38.0mm de ancho (holgura limpia para servo SG90 y speaker 1511)
@@ -183,15 +192,15 @@ for i in range(18):
     holes.append(Part.makeCylinder(0.7, 6.0, FreeCAD.Vector(10.5*math.cos(ang), -21.0, spk_cz + 10.5*math.sin(ang)), FreeCAD.Vector(0, 1, 0)))
 head_r = head_r.cut(Part.makeCompound(holes))
 
-# Alojamiento de precision para Servo SG90 (cuerpo, aletas y torre de engranaje)
-s_pocket = Part.makeBox(23.6, 13.0, 23.5, FreeCAD.Vector(-11.8, -12.5, 44.0))
-s_flange_pocket = Part.makeBox(33.0, 13.0, 3.0, FreeCAD.Vector(-16.5, -12.5, 59.5))
-s_tower_cut = Part.makeCylinder(6.5, 5.0, FreeCAD.Vector(0.0, -6.0, 40.0), FreeCAD.Vector(0, 0, 1))
+# Alojamiento de precision para Servo SG90 (cuerpo, aletas y torre de engranaje elevada Z >= 41.5mm)
+s_pocket = Part.makeBox(23.6, 13.0, 23.5, FreeCAD.Vector(-11.8, -12.5, 45.5))
+s_flange_pocket = Part.makeBox(33.0, 13.0, 3.0, FreeCAD.Vector(-16.5, -12.5, 61.0))
+s_tower_cut = Part.makeCylinder(6.5, 5.0, FreeCAD.Vector(0.0, -6.0, 41.5), FreeCAD.Vector(0, 0, 1))
 head_r = head_r.cut(s_pocket).cut(s_flange_pocket).cut(s_tower_cut)
 
 # Taladros piloto para fijacion de aletas del servo M2
 for sx in [-14.0, 14.0]:
-    s_hole = Part.makeCylinder(0.9, 10.0, FreeCAD.Vector(sx, -6.0, 56.0), FreeCAD.Vector(0, 0, 1))
+    s_hole = Part.makeCylinder(0.9, 10.0, FreeCAD.Vector(sx, -6.0, 57.5), FreeCAD.Vector(0, 0, 1))
     head_r = head_r.cut(s_hole)
 
 # Taladros pasantes y avellanados M2 a través de las paredes sólidas traseras
@@ -201,9 +210,9 @@ for bx, bz in h_boss_coords:
     cb   = Part.makeCylinder(2.0, 3.0, FreeCAD.Vector(bx, -20.5, bz), FreeCAD.Vector(0, 1, 0))
     head_r = head_r.cut(thru).cut(cb)
 
-# Copa hembra de tornamesa en cabeza trasera
-neck_cup_r = Part.makeCylinder(9.3, 3.5, FreeCAD.Vector(0.0, 0.0, 37.5), FreeCAD.Vector(0, 0, 1))
-conduit_r  = Part.makeCylinder(4.5, 8.0, FreeCAD.Vector(0.0, 0.0, 37.5), FreeCAD.Vector(0, 0, 1))
+# Copa hembra de tornamesa en cabeza trasera (Dia 18.6mm, Altura 1.2mm, Z in [41.0, 42.2])
+neck_cup_r = Part.makeCylinder(9.3, 1.2, FreeCAD.Vector(0.0, 0.0, 41.0), FreeCAD.Vector(0, 0, 1))
+conduit_r  = Part.makeCylinder(4.5, 8.0, FreeCAD.Vector(0.0, 0.0, 40.0), FreeCAD.Vector(0, 0, 1))
 head_r = head_r.cut(neck_cup_r).cut(conduit_r)
 
 add_part(head_r, "Carcasa_Cabeza_Trasera", "2_Carcasa_Cabeza_Trasera", COLOR_BODY_CREAM)
@@ -220,21 +229,20 @@ torso_solid = torso_box.makeFillet(6.0, tv_edges)
 th_edges = [e for e in torso_solid.Edges if abs(e.Vertexes[0].Point.z - z_tmax) < 0.05 or abs(e.Vertexes[0].Point.z - z_tmin) < 0.05]
 torso_solid = torso_solid.makeFillet(2.5, th_edges)
 
-# Anillo Macho de Tornamesa de Cuello: Dia 18.0mm, Altura 3.5mm de Z=37.5 a 41.0mm
-neck_ring = Part.makeCylinder(9.0, 3.5, FreeCAD.Vector(0.0, 0.0, 37.5), FreeCAD.Vector(0, 0, 1))
+# Anillo Macho de Tornamesa de Cuello: Dia 18.0mm, Altura 1.0mm sobre el torso (Z=40.0 a 42.0mm)
+neck_ring = Part.makeCylinder(9.0, 2.0, FreeCAD.Vector(0.0, 0.0, 40.0), FreeCAD.Vector(0, 0, 1))
 torso_solid = torso_solid.fuse(neck_ring)
 
-# Alojamiento para Servo Horn fijo en el cuello: 15.2 x 4.2 x 2.0mm
-horn_pocket = Part.makeBox(15.2, 4.2, 2.0, FreeCAD.Vector(-7.6, -2.1, 39.0))
+# Alojamiento para Servo Horn fijo en el cuello: 15.2 x 4.2 x 2.2mm en Z in [38.8, 41.0]
+horn_pocket = Part.makeBox(15.2, 4.2, 2.2, FreeCAD.Vector(-7.6, -2.1, 38.8))
 torso_solid = torso_solid.cut(horn_pocket)
 
 for hx in [-5.5, 5.5]:
-    h_hole = Part.makeCylinder(0.85, 6.0, FreeCAD.Vector(hx, 0.0, 36.0), FreeCAD.Vector(0, 0, 1))
+    h_hole = Part.makeCylinder(0.85, 6.0, FreeCAD.Vector(hx, 0.0, 35.0), FreeCAD.Vector(0, 0, 1))
     torso_solid = torso_solid.cut(h_hole)
 
 neck_conduit = Part.makeCylinder(4.5, 12.0, FreeCAD.Vector(0.0, 0.0, 34.0), FreeCAD.Vector(0, 0, 1))
-tower_relief = Part.makeCylinder(6.5, 3.0, FreeCAD.Vector(0.0, -6.0, 39.5), FreeCAD.Vector(0, 0, 1))
-torso_solid = torso_solid.cut(neck_conduit).cut(tower_relief)
+torso_solid = torso_solid.cut(neck_conduit)
 
 # Cajeados de Rueda (Guardabarros) optimizados: R = 19.5mm (2.5mm holgura radial), ancho 11.5mm con 1.5mm de holgura lateral simetrica
 recess_l = Part.makeCylinder(19.5, 11.5, FreeCAD.Vector(-42.5, 0.0, 17.0), FreeCAD.Vector(1, 0, 0))
@@ -448,11 +456,11 @@ add_part(usb_c, "Interno_Conector_USBC", "Conector_USBC", COLOR_STEEL_METAL)
 sw1 = Part.makeBox(8.5, 4.0, 4.0, FreeCAD.Vector(-19.25, -37.2, 25.1))
 add_part(sw1, "Interno_Switch_SW1", "Switch_SW1", COLOR_STEEL_METAL)
 
-# Servo SG90 instalado boca abajo dentro de la cabeza trasera
-s_body = Part.makeBox(22.8, 12.0, 22.5, FreeCAD.Vector(-11.4, -12.0, 44.5))
-s_flange = Part.makeBox(32.4, 12.0, 2.0, FreeCAD.Vector(-16.2, -12.0, 60.0))
-s_tower = Part.makeCylinder(6.0, 4.0, FreeCAD.Vector(0.0, -6.0, 40.5), FreeCAD.Vector(0, 0, 1))
-s_spline = Part.makeCylinder(2.4, 3.5, FreeCAD.Vector(0.0, 0.0, 37.0), FreeCAD.Vector(0, 0, 1))
+# Servo SG90 instalado boca abajo dentro de la cabeza trasera (torre elevada Z >= 42.0mm)
+s_body = Part.makeBox(22.8, 12.0, 22.5, FreeCAD.Vector(-11.4, -12.0, 46.0))
+s_flange = Part.makeBox(32.4, 12.0, 2.0, FreeCAD.Vector(-16.2, -12.0, 61.5))
+s_tower = Part.makeCylinder(6.0, 4.0, FreeCAD.Vector(0.0, -6.0, 42.0), FreeCAD.Vector(0, 0, 1))
+s_spline = Part.makeCylinder(2.4, 4.0, FreeCAD.Vector(0.0, 0.0, 38.0), FreeCAD.Vector(0, 0, 1))
 servo = s_body.fuse(s_flange).fuse(s_tower).fuse(s_spline)
 add_part(servo, "Interno_Servo_SG90", "Servo_SG90_Pan", COLOR_SERVO_BLUE)
 
