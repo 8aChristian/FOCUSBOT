@@ -127,47 +127,44 @@ print("2. Engineering Carcasa Cabeza Trasera...", flush=True)
 head_r = head_r_raw
 
 def make_round_cat_ear():
-    # Oreja izquierda canónica estilizada a X = -18.5mm con curvas BSpline orgánicas redondeadas
-    center_x = -18.5
+    # Oreja izquierda estilizada bio-inspirada (baja, ancha y suavemente redondeada)
+    # Altura reducida a 5.3mm sobre el techo de la cabeza (Z = 76.0 a 81.3mm), sin disco plano ni punta afilada
     b_z = 75.5
     
-    # Base redondeada suave (perfil petaliforme ovalado)
-    p1 = FreeCAD.Vector(center_x + 5.0, -0.6, b_z)
-    p2 = FreeCAD.Vector(center_x - 7.5, -4.8, b_z)
-    p3 = FreeCAD.Vector(center_x - 5.5, -9.8, b_z)
-    p4 = FreeCAD.Vector(center_x + 3.5, -8.8, b_z)
+    # Base ancha redondeada (perfil ovalado suave, sumergido 0.5mm en el techo)
+    p1 = FreeCAD.Vector(-14.0, -1.5, b_z)
+    p2 = FreeCAD.Vector(-26.5, -3.0, b_z)
+    p3 = FreeCAD.Vector(-26.0, -11.0, b_z)
+    p4 = FreeCAD.Vector(-15.0, -10.0, b_z)
     w_base = Part.Wire(Part.BSplineCurve([p1, p2, p3, p4, p1]).toShape())
     
-    # Sección media suave y curvada a Z = 81.5mm
-    m_z = 81.5
-    mp1 = FreeCAD.Vector(center_x + 2.5, -1.8, m_z)
-    mp2 = FreeCAD.Vector(center_x - 7.5, -4.8, m_z)
-    mp3 = FreeCAD.Vector(center_x - 5.8, -8.5, m_z)
-    mp4 = FreeCAD.Vector(center_x + 1.2, -7.8, m_z)
+    # Seccion media suave y abovedada a Z = 78.5mm
+    m_z = 78.5
+    mp1 = FreeCAD.Vector(-16.0, -2.5, m_z)
+    mp2 = FreeCAD.Vector(-24.5, -3.8, m_z)
+    mp3 = FreeCAD.Vector(-24.0, -9.5, m_z)
+    mp4 = FreeCAD.Vector(-16.8, -8.5, m_z)
     w_mid = Part.Wire(Part.BSplineCurve([mp1, mp2, mp3, mp4, mp1]).toShape())
     
-    # Cúpula redondeada suave a Z = 85.8mm (corona redonda bio-inspirada, radio 2.4mm)
-    t_z = 85.8
-    tip_c = FreeCAD.Vector(center_x - 3.2, -5.2, t_z)
-    w_tip = Part.Wire(Part.makeCircle(2.4, tip_c, FreeCAD.Vector(-0.25, -0.15, 1.0)))
+    # Vertice suave de cierre en la cupula a Z = 81.3mm (cero tapa plana, curvatura continua)
+    tip_v = Part.Vertex(FreeCAD.Vector(-21.5, -5.8, 81.3))
+    ear_solid = Part.makeLoft([w_base, w_mid, tip_v], True)
     
-    ear_solid = Part.makeLoft([w_base, w_mid, w_tip], True)
-    
-    # Vaciado interior / concha redondeada frontal-lateral
-    sp1 = FreeCAD.Vector(center_x + 3.6, -1.5, 76.8)
-    sp2 = FreeCAD.Vector(center_x - 5.5, -4.5, 76.8)
-    sp3 = FreeCAD.Vector(center_x - 3.8, -8.0, 76.8)
-    sp4 = FreeCAD.Vector(center_x + 2.2, -7.0, 76.8)
+    # Concha frontal-lateral organica suave
+    sp1 = FreeCAD.Vector(-15.0, -1.8, 76.2)
+    sp2 = FreeCAD.Vector(-24.5, -3.2, 76.2)
+    sp3 = FreeCAD.Vector(-23.0, -6.5, 76.2)
+    sp4 = FreeCAD.Vector(-16.0, -5.5, 76.2)
     w_sb = Part.Wire(Part.BSplineCurve([sp1, sp2, sp3, sp4, sp1]).toShape())
     
-    smp1 = FreeCAD.Vector(center_x + 1.4, -2.2, 81.8)
-    smp2 = FreeCAD.Vector(center_x - 5.5, -4.5, 81.8)
-    smp3 = FreeCAD.Vector(center_x - 4.0, -7.0, 81.8)
-    smp4 = FreeCAD.Vector(center_x + 0.4, -6.5, 81.8)
+    smp1 = FreeCAD.Vector(-17.0, -2.8, 78.5)
+    smp2 = FreeCAD.Vector(-23.0, -3.8, 78.5)
+    smp3 = FreeCAD.Vector(-22.0, -5.8, 78.5)
+    smp4 = FreeCAD.Vector(-17.5, -5.2, 78.5)
     w_sm = Part.Wire(Part.BSplineCurve([smp1, smp2, smp3, smp4, smp1]).toShape())
     
-    w_st = Part.Wire(Part.makeCircle(1.3, FreeCAD.Vector(center_x - 2.8, -4.8, 84.8), FreeCAD.Vector(-0.25, -0.15, 1.0)))
-    scoop = Part.makeLoft([w_sb, w_sm, w_st], True)
+    st_v = Part.Vertex(FreeCAD.Vector(-21.0, -4.8, 80.4))
+    scoop = Part.makeLoft([w_sb, w_sm, st_v], True)
     
     return ear_solid.cut(scoop)
 
@@ -316,18 +313,19 @@ saddle_r = Part.makeBox(24.5, 13.0, 6.5, FreeCAD.Vector(4.0, -6.5, 5.5))
 torso_base = torso_base.fuse(saddle_l).fuse(saddle_r)
 
 # Standoffs de fijacion unificada Mainboard PCB + Cierre Tapa (MH1-MH4 a ±26.0, ±28.0)
-# Cero colisiones con PCB, cero pilares seccionados: Sujecion simultanea de PCB y Tapa con 4 tornillos M2
+# Cierre inferior DFA: Tornillos M2 insertados desde el chasis inferior hacia bosses ciegos en la tapa.
+# La cupula y capó superior quedan 100% lisos, continuos y limpios sin orificios ni avellanados visibles.
 standoff_coords = [(-26.0, 28.0), (26.0, 28.0), (-26.0, -28.0), (26.0, -28.0)]
 for sx, sy in standoff_coords:
-    p = Part.makeCylinder(2.5, 18.5, FreeCAD.Vector(sx, sy, 5.0), FreeCAD.Vector(0, 0, 1))
-    pilot = Part.makeCylinder(0.85, 10.0, FreeCAD.Vector(sx, sy, 14.0), FreeCAD.Vector(0, 0, 1))
-    torso_base = torso_base.fuse(p).cut(pilot)
+    p_base = Part.makeCylinder(2.6, 19.5, FreeCAD.Vector(sx, sy, 5.0), FreeCAD.Vector(0, 0, 1))
+    cb_bot = Part.makeCylinder(2.1, 1.8, FreeCAD.Vector(sx, sy, 3.4), FreeCAD.Vector(0, 0, 1))
+    thru_bot = Part.makeCylinder(1.15, 22.0, FreeCAD.Vector(sx, sy, 3.4), FreeCAD.Vector(0, 0, 1))
+    torso_base = torso_base.fuse(p_base).cut(cb_bot).cut(thru_bot)
 
 for sx, sy in standoff_coords:
-    p_tapa = Part.makeCylinder(2.4, 15.9, FreeCAD.Vector(sx, sy, 25.1), FreeCAD.Vector(0, 0, 1))
-    thru = Part.makeCylinder(1.15, 20.0, FreeCAD.Vector(sx, sy, 24.0), FreeCAD.Vector(0, 0, 1))
-    cb = Part.makeCylinder(2.0, 3.0, FreeCAD.Vector(sx, sy, 38.5), FreeCAD.Vector(0, 0, 1))
-    torso_tapa = torso_tapa.fuse(p_tapa).cut(thru).cut(cb)
+    p_tapa = Part.makeCylinder(2.6, 14.5, FreeCAD.Vector(sx, sy, 24.5), FreeCAD.Vector(0, 0, 1))
+    pilot_blind = Part.makeCylinder(0.85, 9.0, FreeCAD.Vector(sx, sy, 24.5), FreeCAD.Vector(0, 0, 1))
+    torso_tapa = torso_tapa.fuse(p_tapa).cut(pilot_blind)
 
 # Bahía LiPo 1S en suelo del Chasis Base
 lipo_bay = Part.makeBox(40.0, 21.0, 7.5, FreeCAD.Vector(-20.0, -24.0, 4.5))
