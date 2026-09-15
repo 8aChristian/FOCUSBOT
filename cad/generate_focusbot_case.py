@@ -274,10 +274,18 @@ for y_c in [29.0, -29.0]:
     caster_cut = sock.fuse(col).fuse(s_x).fuse(s_y)
     torso_solid = torso_solid.cut(caster_cut)
 
-# Difusor de luz de pecho (Frontal)
-bar_slot = Part.makeBox(18.0, 6.0, 3.2, FreeCAD.Vector(-9.0, 34.0, 25.5))
-pinhole = Part.makeCylinder(0.5, 6.0, FreeCAD.Vector(0.0, 34.0, 22.0), FreeCAD.Vector(0, 1, 0))
-torso_solid = torso_solid.cut(bar_slot).cut(pinhole)
+def make_stadium(w, h, depth, y_start, z_c):
+    r = h / 2.0
+    box = Part.makeBox(w - 2*r, depth, h, FreeCAD.Vector(-(w/2 - r), y_start, z_c - r))
+    cyl_l = Part.makeCylinder(r, depth, FreeCAD.Vector(-(w/2 - r), y_start, z_c), FreeCAD.Vector(0, 1, 0))
+    cyl_r = Part.makeCylinder(r, depth, FreeCAD.Vector(w/2 - r, y_start, z_c), FreeCAD.Vector(0, 1, 0))
+    return box.fuse(cyl_l).fuse(cyl_r)
+
+# Difusor de luz de pecho (Frontal) - Forma rectangular redondeada / stadium elegante
+recess_bezel = make_stadium(23.6, 7.8, 2.0, 37.0, 25.5)
+bar_slot     = make_stadium(19.6, 5.4, 8.0, 31.5, 25.5)
+pinhole      = Part.makeCylinder(0.65, 8.0, FreeCAD.Vector(0.0, 32.0, 32.2), FreeCAD.Vector(0, 1, 0))
+torso_solid  = torso_solid.cut(recess_bezel).cut(bar_slot).cut(pinhole)
 
 # Aberturas traseras para USB-C y switch SW1
 usb_throat = Part.makeBox(11.0, 8.0, 5.0, FreeCAD.Vector(-5.5, -40.0, 24.2))
@@ -403,10 +411,8 @@ ball_rear  = Part.makeSphere(4.0, FreeCAD.Vector(0.0, -29.0, 4.0))
 add_part(ball_front, "Bola_Rodamiento_Frontal", "9_Bola_Frontal", COLOR_STEEL_METAL)
 add_part(ball_rear,  "Bola_Rodamiento_Trasera", "10_Bola_Trasera", COLOR_STEEL_METAL)
 
-# Difusor de luz de pecho
-diffuser = Part.makeBox(17.6, 2.0, 2.8, FreeCAD.Vector(-8.8, 36.5, 25.7))
-d_edges = [e for e in diffuser.Edges if abs(e.Vertexes[0].Point.y - e.Vertexes[1].Point.y) < 0.01]
-diffuser = diffuser.makeFillet(0.8, d_edges)
+# Difusor de luz de pecho - Sólido traslúcido rectangular redondeado / stadium
+diffuser = make_stadium(19.2, 5.0, 2.4, 36.3, 25.5)
 add_part(diffuser, "Difusor_Luz_Pecho", "6_Difusor_Luz_Pecho", COLOR_CYAN_GLOW)
 
 # ==============================================================================

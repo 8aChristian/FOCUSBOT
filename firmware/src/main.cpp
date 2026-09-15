@@ -1,3 +1,21 @@
+// =============================================================================
+// main.cpp  —  FocusBot v2.0 Production Firmware  (PlatformIO / Arduino)
+// =============================================================================
+//
+// Architecture overview:
+//   DisplayEngine      — TFT_eSPI ST7789, eye animations, dashboard
+//   AudioSynth         — I2S MAX98357A, sound-effect player
+//   MotorController    — DRV8833 dual-H-bridge, wander + cute moves
+//   ServoNeck          — SG90 smooth servo, choreography sequencer
+//   CameraAI           — OV2640 frame-diff vision, centroid eye-tracking
+//   VoiceEar           — INMP441 MEMS mic, wakeword + tap detection
+//   ConnectivityBridge — BLE UART bridge to companion phone app
+//   BatteryMonitor     — LiPo ADC voltage → percentage
+//
+// Main loop rate: ~50 Hz (20 ms delay)
+// Camera AI analysis rate: 5 Hz (internal timer in CameraAI)
+// =============================================================================
+
 #include <Arduino.h>
 #include "pinout.h"
 #include "robot_types.h"
@@ -9,8 +27,11 @@
 #include "voice_ear.h"
 #include "connectivity_bridge.h"
 #include "battery_monitor.h"
+#include "focusbot_llm_persona.h"
 
-// Subsystem Instances
+// ---------------------------------------------------------------------------
+// Global subsystem objects
+// ---------------------------------------------------------------------------
 DisplayEngine      display;
 AudioSynth         audio;
 MotorController    motors;
@@ -20,39 +41,54 @@ VoiceEar           voice;
 ConnectivityBridge bleBridge;
 BatteryMonitor     battery;
 
-// Robot State
-RobotMode currentMode = MODE_BOOT_WAKEUP;
-uint32_t modeStartTime = 0;
-int currentFocusScore = 100;
+// ---------------------------------------------------------------------------
+// Global state
+// ---------------------------------------------------------------------------
+RobotMode currentMode   = MODE_BOOT_WAKEUP;
+uint32_t  modeStartTime = 0;
+
+FocusState focusState = {
+    /* score           */ 100,
+    /* continuousSec   */   0,
+    /* totalFocusSec   */   0,
+    /* milestoneMinutes*/   0,
+    /* procrastinating */  false,
+    /* personPresent   */  true,
+    /* lookX           */  0.0f,
+    /* lookY           */  0.0f,
+    /* faceDetected    */  false,
+};
+
 uint32_t lastTelemetryTime = 0;
+uint32_t lastCuteMovTime   = 0;   // idle cute-movement cadence timer
+uint32_t nextCuteInterval  = 10000; // randomised per-event (8–15 s)
 
-void switchMode(RobotMode newMode) {
-    if (currentMode == newMode) return;
-    currentMode = newMode;
-    modeStartTime = millis();
-
-    switch (newMode) {
+// =============================================================================
+// applyIllumForMode()
+//   Drive the RGB illumination ring to match the current operating mode and
+//   live focus state.  Call after any mode change or score change.
+// =============================================================================
+void applyIllumForMode() {
+    if (battery.getPercentage() < 20) {
+        display.setIllumination(ILLUM_DIM_BATTERY);
+        return;
+    }
+    switch (currentMode) {
         case MODE_DEFAULT_EXPLORE:
-            display.showModeToast("DEFAULT EXPLORE");
-            audio.play(SND_HAPPY_CHIRP);
-            display.setExpression(EXPR_HAPPY);
-            motors.resetWanderTimer();
-            neck.lookCenter();
+            display.setIllumination(ILLUM_CYAN_IDLE);
             break;
 
         case MODE_FOCUS_GUARD:
-            display.showModeToast("FOCUS MODE (AI)");
-            motors.stop();
-            neck.lookCenter();
-            audio.play(SND_FOCUS_START);
-            display.setExpression(EXPR_FOCUS_SQUINT);
+            if (focusState.procrastinating)
+                display.setIllumination(ILLUM_RED_ALERT);
+            else if (focusState.continuousSec >= 25 * 60)
+                display.setIllumination(ILLUM_GREEN_WIN);
+            else
+                display.setIllumination(ILLUM_AMBER_FOCUS);
             break;
 
         case MODE_LLM_COMPANION:
-            display.showModeToast("LLM COMPANION");
-            motors.stop();
-            audio.play(SND_CONFIRM_BOOP);
-            display.setExpression(EXPR_SURPRISED);
+            display.setIllumination(ILLUM_PULSE_THINKING);
             break;
 
         default:
@@ -60,165 +96,425 @@ void switchMode(RobotMode newMode) {
     }
 }
 
+// =============================================================================
+// switchMode()
+//   Transition to a new RobotMode, running the appropriate entry animation.
+// =============================================================================
+void switchMode(RobotMode newMode) {
+    if (currentMode == newMode) return;
+    currentMode  = newMode;
+    modeStartTime = millis();
+    applyIllumForMode();
+
+    switch (newMode) {
+
+        // ------------------------------------------------------------------
+        case MODE_DEFAULT_EXPLORE:
+            display.showModeToast("EXPLORE");
+            display.setExpression(EXPR_HAPPY);
+            audio.play(SND_HAPPY_CHIRP);
+            motors.resetWanderTimer();
+            motors.wiggle();
+            neck.lookCenter();
+            neck.tiltCute();
+            break;
+
+        // ------------------------------------------------------------------
+        case MODE_FOCUS_GUARD:
+            display.showModeToast("FOCUS GUARD");
+            display.setExpression(EXPR_FOCUSED);
+            audio.play(SND_FOCUS_START);
+            motors.stop();
+            neck.lookCenter();
+            neck.nodYes();
+            break;
+
+        // ------------------------------------------------------------------
+        case MODE_LLM_COMPANION:
+            display.showModeToast("LLM COMPANION");
+            display.setExpression(EXPR_SURPRISED);
+            audio.play(SND_CONFIRM_BOOP);
+            motors.stop();
+            neck.tiltCute();
+            break;
+
+        // ------------------------------------------------------------------
+        case MODE_LOW_POWER:
+            display.showModeToast("LOW BATTERY");
+            display.setExpression(EXPR_SLEEPY);
+            motors.stop();
+            neck.lookCenter();
+            break;
+
+        default: break;
+    }
+}
+
+// =============================================================================
+// doIdleCuteMovement()
+//   Random 8-case cute behaviour executed during explore mode idle.
+//   Expressions draw from the full Cozmo library; durations kept short.
+// =============================================================================
+void doIdleCuteMovement() {
+    int r = random(8);
+    switch (r) {
+
+        case 0:
+            // Skeptical head-tilt — "hmm, interesting…"
+            neck.tiltCute();
+            display.setExpression(EXPR_SKEPTIC);
+            break;
+
+        case 1:
+            // Peek around suspiciously
+            neck.peekAround();
+            display.setExpression(EXPR_SUSPICIOUS);
+            break;
+
+        case 2:
+            // Happy shimmy with gleeful eyes
+            motors.wiggle();
+            display.setExpression(EXPR_GLEE);
+            audio.play(SND_HAPPY_CHIRP);
+            break;
+
+        case 3:
+            // Deep in thought — nod while thinking
+            neck.nodYes();
+            display.setExpression(EXPR_THINKING);
+            break;
+
+        case 4:
+            // Cheeky wink with a tilt
+            display.setExpression(EXPR_WINK);
+            neck.tiltCute();
+            break;
+
+        case 5:
+            // Curious forward nudge with awe
+            motors.nudgeForward();
+            display.setExpression(EXPR_AWE);
+            break;
+
+        case 6:
+            // Cute confused: worried + shake no
+            display.setExpression(EXPR_WORRIED);
+            neck.shakeNo();
+            break;
+
+        case 7:
+            // Unimpressed → sudden glee + wiggle
+            display.setExpression(EXPR_UNIMPRESSED);
+            delay(900);
+            display.setExpression(EXPR_GLEE);
+            motors.wiggle();
+            break;
+    }
+}
+
+// =============================================================================
+// handleLlmReaction() — Parse emotional & actuation tags from LLM response
+// =============================================================================
+void handleLlmReaction(const String& msg) {
+    // 1. Emotion & Visual Reactivity
+    if (msg.indexOf("[GLEE]") >= 0) {
+        display.setIllumination(ILLUM_GREEN_WIN);
+        display.setExpression(EXPR_GLEE);
+        audio.play(SND_HAPPY_CHIRP);
+    } else if (msg.indexOf("[AWE]") >= 0) {
+        display.setIllumination(ILLUM_CYAN_IDLE);
+        display.setExpression(EXPR_AWE);
+        audio.play(SND_CURIOUS_TRILL);
+    } else if (msg.indexOf("[HEART]") >= 0) {
+        display.setIllumination(ILLUM_PINK_HAPPY);
+        display.setExpression(EXPR_HEART);
+        audio.play(SND_PETTED_PURR);
+    } else if (msg.indexOf("[WINK]") >= 0) {
+        display.setIllumination(ILLUM_CYAN_IDLE);
+        display.setExpression(EXPR_WINK);
+        audio.play(SND_CONFIRM_BOOP);
+    } else if (msg.indexOf("[WORRIED]") >= 0) {
+        display.setIllumination(ILLUM_AMBER_FOCUS);
+        display.setExpression(EXPR_WORRIED);
+        audio.play(SND_SAD_WHINE);
+    } else if (msg.indexOf("[ANGRY]") >= 0) {
+        display.setIllumination(ILLUM_RED_ALERT);
+        display.setExpression(EXPR_ANGRY);
+        audio.play(SND_PROCRASTINATION_ALERT);
+    } else if (msg.indexOf("[SCARED]") >= 0) {
+        display.setIllumination(ILLUM_RED_ALERT);
+        display.setExpression(EXPR_SCARED);
+        audio.play(SND_SAD_WHINE);
+    } else if (msg.indexOf("[SAD]") >= 0) {
+        display.setIllumination(ILLUM_DIM_BATTERY);
+        display.setExpression(EXPR_SAD_DOWN);
+        audio.play(SND_SAD_WHINE);
+    } else if (msg.indexOf("[THINKING]") >= 0) {
+        display.setIllumination(ILLUM_PULSE_THINKING);
+        display.setExpression(EXPR_THINKING);
+        audio.play(SND_THINKING_HUM);
+    } else {
+        display.setIllumination(ILLUM_CYAN_IDLE);
+        display.setExpression(EXPR_HAPPY);
+        audio.play(SND_HAPPY_CHIRP);
+    }
+
+    // 2. Mechatronic Physical Reactions
+    if (msg.indexOf("[NOD]") >= 0)    neck.nodYes();
+    if (msg.indexOf("[SHAKE]") >= 0)  neck.shakeNo();
+    if (msg.indexOf("[TILT]") >= 0)   neck.tiltCute();
+    if (msg.indexOf("[WIGGLE]") >= 0) motors.wiggle();
+    if (msg.indexOf("[SPIN]") >= 0)   motors.spinJoy();
+    if (msg.indexOf("[NUDGE]") >= 0)  motors.nudgeForward();
+}
+
+// =============================================================================
+// setup()
+// =============================================================================
 void setup() {
     Serial.begin(115200);
     delay(500);
-    Serial.println("\n==========================================");
-    Serial.println(">> FOCUSBOT v12.0 PRODUCTION FIRMWARE <<");
-    Serial.println("==========================================");
+    Serial.println("\n====================================");
+    Serial.println("  FOCUSBOT v2.0  PRODUCTION FIRMWARE");
+    Serial.println("====================================");
 
-    // 1. Initialize Display
+    // Boot-diagnostic splash — each subsystem gets a progress bar tick
     display.init();
-    display.showBootDiagnostic("ST7789 IPS Display", true, 15);
+    display.showBootDiagnostic("ST7789 IPS Display",    true,  15);
 
-    // 2. Initialize Audio Synthesizer
-    bool audioOk = audio.init();
-    display.showBootDiagnostic("MAX98357A Audio DAC", audioOk, 30);
+    bool audioOk  = audio.init();
+    display.showBootDiagnostic("MAX98357A Audio DAC",   audioOk,  30);
 
-    // 3. Initialize Battery Telemetry
-    bool batOk = battery.init();
-    display.showBootDiagnostic("LiPo Battery ADC", batOk, 45);
+    bool batOk    = battery.init();
+    display.showBootDiagnostic("LiPo Battery ADC",      batOk,    45);
 
-    // 4. Initialize Pan Neck Servo
-    bool servoOk = neck.init();
-    display.showBootDiagnostic("SG90 Neck Servo", servoOk, 60);
+    bool servoOk  = neck.init();
+    display.showBootDiagnostic("SG90 Neck Servo",       servoOk,  60);
 
-    // 5. Initialize DRV8833 Dual Motors
-    bool motOk = motors.init();
-    display.showBootDiagnostic("DRV8833 Dual H-Bridge", motOk, 75);
+    bool motOk    = motors.init();
+    display.showBootDiagnostic("DRV8833 Dual Motors",   motOk,    75);
 
-    // 6. Initialize INMP441 Digital Microphone
-    bool micOk = voice.init();
-    display.showBootDiagnostic("INMP441 MEMS Mic", micOk, 88);
+    bool micOk    = voice.init();
+    display.showBootDiagnostic("INMP441 MEMS Mic",      micOk,    88);
 
-    // 7. Initialize OV2640 AI Camera
-    bool camOk = camera.init();
-    display.showBootDiagnostic("OV2640 AI Vision", camOk, 100);
+    bool camOk    = camera.init();
+    display.showBootDiagnostic("OV2640 AI Vision",      camOk,   100);
 
     delay(300);
-
-    // 8. Initialize Bluetooth BLE Mobile App Bridge
     bleBridge.init();
 
-    // WAKE UP SEQUENCE!
-    Serial.println("[FocusBot] All Subsystems Online! Awakening...");
+    Serial.println("[FocusBot] All subsystems online — starting wakeup sequence");
+
+    // Wakeup sequence
     audio.play(SND_WAKEUP_CHIME);
     display.playWakeupAnimation();
+    neck.tiltCute();
+    delay(300);
+    motors.wiggle();
 
-    // Default to explore mode
+    // Enter explore mode
     switchMode(MODE_DEFAULT_EXPLORE);
+    lastCuteMovTime  = millis();
+    nextCuteInterval = random(8000, 15000);
 }
 
+// =============================================================================
+// loop()  — 50 Hz main loop
+// =============================================================================
 void loop() {
     uint32_t now = millis();
 
-    // 1. Update Hardware Watchdogs & Telemetry
+    // Always-on subsystem ticks
     battery.update();
-    neck.update();
+    neck.update();           // Non-blocking servo smooth-motion tick
 
-    // Send status to paired phone every 1.5 seconds
+    // ------------------------------------------------------------------
+    // BLE Telemetry  (every 1.5 s)
+    // ------------------------------------------------------------------
     if (now - lastTelemetryTime > 1500) {
         lastTelemetryTime = now;
-        bleBridge.sendTelemetry(currentMode, battery.getPercentage(), currentFocusScore);
+        bleBridge.sendTelemetry(currentMode,
+                                battery.getPercentage(),
+                                focusState.score);
     }
 
-    // 2. Micro-Feature: Check Voice Ear & Petting Sensor
+    // ==================================================================
+    // VOICE / TOUCH INPUT  (highest priority — checked every loop)
+    // ==================================================================
     VoiceEvent vEvent = voice.listen();
+
     if (vEvent != VOICE_NONE) {
         switch (vEvent) {
-            case VOICE_TAP_HEAD: // Head Petting Detection!
+
+            // ---- Pet / tap on the head -----------------------------------
+            case VOICE_TAP_HEAD:
+                display.setIllumination(ILLUM_PINK_HAPPY);
                 display.setExpression(EXPR_HEART);
                 audio.play(SND_PETTED_PURR);
-                neck.setAngle(random(75, 105), 3.0f);
+                neck.tiltCute();
                 delay(1200);
                 display.setExpression(EXPR_HAPPY);
+                motors.wiggle();
+                applyIllumForMode();
                 break;
 
-            case VOICE_COMMAND_FOCUS: // "Focus Mode" voice command
+            // ---- Voice commands -----------------------------------------
+            case VOICE_COMMAND_FOCUS:
                 switchMode(MODE_FOCUS_GUARD);
                 break;
 
-            case VOICE_COMMAND_DEFAULT: // "Default Mode" voice command
+            case VOICE_COMMAND_DEFAULT:
                 switchMode(MODE_DEFAULT_EXPLORE);
                 break;
 
-            case VOICE_WAKEWORD_DETECTED: // "Hey Focus"
-                audio.play(SND_CONFIRM_BOOP);
+            // ---- Wakeword ("Hey FocusBot") ------------------------------
+            case VOICE_WAKEWORD_DETECTED:
+                display.setIllumination(ILLUM_PULSE_THINKING);
                 display.setExpression(EXPR_SURPRISED);
+                audio.play(SND_CONFIRM_BOOP);
+                neck.nodYes();
+                delay(400);
+                display.setExpression(EXPR_FOCUSED);
                 motors.stop();
-                neck.lookCenter();
-                if (bleBridge.isConnected()) {
-                    switchMode(MODE_LLM_COMPANION);
-                }
+                if (bleBridge.isConnected()) switchMode(MODE_LLM_COMPANION);
                 break;
 
-            default:
+            // ---- Startled by loud noise ----------------------------------
+            case VOICE_LOUD_NOISE:
+                display.setExpression(EXPR_SCARED);
+                motors.backupShyly();
+                neck.shakeNo();
+                audio.play(SND_CURIOUS_TRILL);
+                delay(600);
+                display.setExpression(EXPR_WORRIED);
                 break;
+
+            default: break;
         }
     }
 
-    // 3. Mode State Machine
+    // ==================================================================
+    // MODE STATE MACHINE
+    // ==================================================================
     switch (currentMode) {
-        // -------------------------------------------------------------
-        // MODE A: DEFAULT EXPLORATION
-        // Gentle wander on the desk, random head scanning, cute eyes
-        // -------------------------------------------------------------
+
+        // ----------------------------------------------------------------
         case MODE_DEFAULT_EXPLORE: {
             motors.updateWander();
             neck.scanCuriosity();
+
+            // Randomised idle cute movement every 8–15 s
+            if ((now - lastCuteMovTime) > nextCuteInterval) {
+                lastCuteMovTime  = now;
+                nextCuteInterval = (uint32_t)random(8000, 15000);
+                doIdleCuteMovement();
+            }
+
             display.updateAnimation();
             break;
         }
 
-        // -------------------------------------------------------------
-        // MODE B: FOCUS GUARD (AI VISION)
-        // Checks presence and anti-procrastination heuristics
-        // -------------------------------------------------------------
+        // ----------------------------------------------------------------
         case MODE_FOCUS_GUARD: {
-            FocusAnalysisResult analysis = camera.updateFocusMonitoring();
-            int elapsedSec = (now - modeStartTime) / 1000;
+            FocusAnalysisResult ai = camera.updateFocusMonitoring();
+            int elapsedSec = (int)((now - modeStartTime) / 1000UL);
 
-            if (analysis.isProcrastinating) {
-                currentFocusScore = max(0, currentFocusScore - 1);
-                display.setExpression(EXPR_ANGRY_ALERT);
-                display.updateAnimation();
-                display.renderFocusDashboard(currentFocusScore, elapsedSec, true);
+            // Sync AI result → FocusState
+            focusState.personPresent   = ai.personPresent;
+            focusState.faceDetected    = ai.faceDetected;
+            focusState.procrastinating = ai.isProcrastinating;
+            focusState.continuousSec   = ai.continuousFocusSec;
+            focusState.totalFocusSec   = elapsedSec;
+            focusState.lookX           = ai.lookTargetX;
+            focusState.lookY           = ai.lookTargetY;
+
+            // Pass centroid to display for eye-tracking
+            display.setLookTarget(ai.lookTargetX, ai.lookTargetY);
+
+            // ---- Procrastination detected --------------------------------
+            if (ai.isProcrastinating) {
+                focusState.score = max(0, focusState.score - 1);
+                display.setIllumination(ILLUM_RED_ALERT);
+                display.setExpression(EXPR_ANGRY);
                 audio.play(SND_PROCRASTINATION_ALERT);
-                delay(400);
-            } else {
-                currentFocusScore = min(100, currentFocusScore + 1);
-                display.setExpression(EXPR_FOCUS_SQUINT);
-                display.updateAnimation();
-                display.renderFocusDashboard(currentFocusScore, elapsedSec, false);
+                neck.shakeNo();
+                motors.stop();
             }
+            // ---- Person absent ------------------------------------------
+            else if (!ai.personPresent) {
+                display.setIllumination(ILLUM_RED_ALERT);
+                display.setExpression(EXPR_WORRIED);
+                neck.peekAround();
+            }
+            // ---- Focused and present ------------------------------------
+            else {
+                focusState.score = min(100, focusState.score + 1);
+                display.setIllumination(ILLUM_AMBER_FOCUS);
+                display.setExpression(EXPR_FOCUSED_TRACKING);
+
+                // 25-minute milestone celebration
+                int milestoneMins = ai.continuousFocusSec / 1500; // 1500 s = 25 min
+                if (milestoneMins > focusState.milestoneMinutes) {
+                    focusState.milestoneMinutes = milestoneMins;
+                    display.setIllumination(ILLUM_GREEN_WIN);
+                    display.setExpression(EXPR_GLEE);
+                    delay(400);
+                    display.setExpression(EXPR_AWE);
+                    display.playCelebration();
+                    audio.play(SND_MILESTONE_FANFARE);
+                    neck.nodYes();
+                    motors.spinJoy();
+                }
+            }
+
+            display.updateAnimation();
+            display.renderFocusDashboard(focusState);
             break;
         }
 
-        // -------------------------------------------------------------
-        // MODE C: LLM MOBILE APP COMPANION
-        // Connected to smartphone with LLM (OpenAI / Claude / Gemini)
-        // -------------------------------------------------------------
+        // ----------------------------------------------------------------
         case MODE_LLM_COMPANION: {
+            display.setIllumination(ILLUM_PULSE_THINKING);
+            display.setExpression(EXPR_THINKING);
+            neck.tiltCute();
+
             String llmMsg = bleBridge.pollIncomingLlmMessage();
             if (llmMsg.length() > 0) {
-                // Speech received from LLM
-                audio.play(SND_HAPPY_CHIRP);
-                display.setExpression(EXPR_HAPPY);
+                handleLlmReaction(llmMsg);
+                Serial.printf("[LLM] %s\n", llmMsg.c_str());
             } else {
                 display.updateAnimation();
             }
             break;
         }
 
-        default:
+        // ----------------------------------------------------------------
+        case MODE_LOW_POWER: {
+            // Minimal activity — just keep display alive
+            static uint32_t lowBatToggle = 0;
+            if (now - lowBatToggle > 3000) {
+                lowBatToggle = now;
+                // Alternate between sleepy and sad expressions
+                static bool toggle = false;
+                display.setExpression(toggle ? EXPR_SLEEPY : EXPR_SAD_DOWN);
+                toggle = !toggle;
+            }
             break;
+        }
+
+        default: break;
     }
 
-    // Safety: Low Battery Alert
-    if (battery.isLowBattery()) {
-        display.setExpression(EXPR_DROWSY);
+    // ==================================================================
+    // GLOBAL SAFETY — low-battery override
+    // ==================================================================
+    if (battery.isLowBattery() && currentMode != MODE_LOW_POWER) {
+        Serial.println("[FocusBot] Low battery — entering low-power mode");
+        display.setIllumination(ILLUM_DIM_BATTERY);
+        display.setExpression(EXPR_SLEEPY);
         motors.stop();
+        switchMode(MODE_LOW_POWER);
     }
 
-    delay(20); // 50 Hz main control loop
+    delay(20); // 50 Hz main loop
 }
